@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -7,9 +10,9 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
-
+    public ChessPiece[][] gameBoard;
     public ChessBoard() {
-        
+        gameBoard= new ChessPiece[8][8];
     }
 
     /**
@@ -19,7 +22,9 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        throw new RuntimeException("Not implemented");
+        //throw new RuntimeException("Not implemented");
+        gameBoard[position.row-1][position.col-1]=piece;
+
     }
 
     /**
@@ -30,7 +35,10 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        throw new RuntimeException("Not implemented");
+
+        //throw new RuntimeException("Not implemented");
+        return gameBoard[position.row-1][position.col-1];
+
     }
 
     /**
@@ -38,6 +46,27 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        //throw new RuntimeException("Not implemented");
+        //pawns
+        for(int col = 0; col <8; col++){
+            gameBoard[1][col] = new ChessPiece(ChessGame.TeamColor.WHITE,ChessPiece.PieceType.PAWN);
+            gameBoard[6][col] = new ChessPiece(ChessGame.TeamColor.BLACK,ChessPiece.PieceType.PAWN);
+        }
+
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessBoard that = (ChessBoard) o;
+        return Objects.deepEquals(gameBoard, that.gameBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(gameBoard);
     }
 }
