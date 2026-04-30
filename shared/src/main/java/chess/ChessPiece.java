@@ -35,7 +35,8 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        //throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
@@ -54,7 +55,12 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        //throw new RuntimeException("Not implemented");
+        java.util.ArrayList<ChessMove> moves= new java.util.ArrayList<>();
+
+        //we about to cook
+        return moves;
+
     }
 
     @Override
