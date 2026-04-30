@@ -58,6 +58,50 @@ public class ChessPiece {
         //throw new RuntimeException("Not implemented");
         java.util.ArrayList<ChessMove> moves= new java.util.ArrayList<>();
 
+        ChessPiece currentPiece= board.getPiece(myPosition);
+        if(currentPiece==null){
+            return moves;
+        }
+        if(type==PieceType.PAWN){
+
+            int direction= 1;
+            if(pieceColor== ChessGame.TeamColor.BLACK){direction=-1;}
+
+            int currentRow= myPosition.row;
+            int currentCol= myPosition.col;
+
+            //normal move
+            ChessPosition walk = new ChessPosition(currentRow+direction,currentCol);
+            if(board.getPiece(walk)==null){//no peice in front
+                moves.add(new ChessMove(myPosition,walk,null));
+            }
+            //start jump
+            if((pieceColor== ChessGame.TeamColor.BLACK && currentRow==7)||(pieceColor== ChessGame.TeamColor.WHITE && currentRow==2)){
+                if(board.getPiece(walk)==null){//has to make sure there's no peice in front still
+                    ChessPosition run = new ChessPosition(currentRow+direction*2,currentCol);
+
+                    if(board.getPiece(run)==null){
+                        moves.add(new ChessMove(myPosition,run,null));
+                    }
+                }
+            }
+            //take right
+            ChessPosition takeRight = new ChessPosition(currentRow+direction,currentCol+1);
+            if(takeRight.col>=1 && takeRight.col<=8){//make sure its in bounds
+                if(board.getPiece(takeRight)!=null&& board.getPiece(takeRight).getTeamColor()!=pieceColor){//not empty and not a friend
+                    moves.add(new ChessMove(myPosition,takeRight,null));
+                }
+            }
+            //take left
+            ChessPosition takeLeft = new ChessPosition(currentRow+direction,currentCol-1);
+            if(takeLeft.col>=1 && takeLeft.col<=8){//make sure its in bounds
+                if(board.getPiece(takeLeft)!=null&& board.getPiece(takeLeft).getTeamColor()!=pieceColor){//not empty and not a friend
+                    moves.add(new ChessMove(myPosition,takeLeft,null));
+                }
+            }
+
+        }
+
         //we about to cook
         return moves;
 
