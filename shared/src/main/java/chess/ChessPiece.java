@@ -62,13 +62,13 @@ public class ChessPiece {
         if(currentPiece==null){
             return moves;
         }
+
+        int currentRow= myPosition.row;
+        int currentCol= myPosition.col;
         if(type==PieceType.PAWN){
 
             int direction= 1;
             if(pieceColor== ChessGame.TeamColor.BLACK){direction=-1;}
-
-            int currentRow= myPosition.row;
-            int currentCol= myPosition.col;
 
             //normal move
             ChessPosition walk = new ChessPosition(currentRow+direction,currentCol);
@@ -123,11 +123,53 @@ public class ChessPiece {
                 }
             }
 
+        }else if(type==PieceType.KNIGHT) {
+            ChessPosition topRight = new ChessPosition(currentRow + 2, currentCol+1);
+            if(PositionGood(board,topRight)) {
+                moves.add(new ChessMove(myPosition,topRight,null));
+            }
+            ChessPosition rightUp = new ChessPosition(currentRow + 1, currentCol+2);
+            if(PositionGood(board,rightUp)) {
+                moves.add(new ChessMove(myPosition,rightUp,null));
+            }
+            ChessPosition rightDown = new ChessPosition(currentRow - 1, currentCol+2);
+            if(PositionGood(board,rightDown)) {
+                moves.add(new ChessMove(myPosition,rightDown,null));
+            }
+            ChessPosition bottomRight = new ChessPosition(currentRow - 2, currentCol+1);
+            if(PositionGood(board,bottomRight)) {
+                moves.add(new ChessMove(myPosition,bottomRight,null));
+            }
+            //left ones
+            ChessPosition topLeft = new ChessPosition(currentRow + 2, currentCol-1);
+            if(PositionGood(board,topLeft)) {
+                moves.add(new ChessMove(myPosition,topLeft,null));
+            }
+            ChessPosition leftUp = new ChessPosition(currentRow + 1, currentCol-2);
+            if(PositionGood(board,leftUp)) {
+                moves.add(new ChessMove(myPosition,leftUp,null));
+            }
+            ChessPosition leftDown = new ChessPosition(currentRow - 1, currentCol-2);
+            if(PositionGood(board,leftDown)) {
+                moves.add(new ChessMove(myPosition,leftDown,null));
+            }
+            ChessPosition bottomLeft = new ChessPosition(currentRow - 2, currentCol-1);
+            if(PositionGood(board,bottomLeft)) {
+                moves.add(new ChessMove(myPosition,bottomLeft,null));
+            }
         }
 
         //we about to cook
         return moves;
 
+    }
+    private boolean PositionGood(ChessBoard board,ChessPosition pos){//only use for moves that attack
+        if(pos.col>=1 && pos.col<=8 && pos.row>=1 && pos.row<=8) {
+            if (board.getPiece(pos) == null||board.getPiece(pos).getTeamColor()!=pieceColor) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
