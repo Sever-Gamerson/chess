@@ -73,12 +73,13 @@ public class ChessPiece {
             //normal move
             ChessPosition walk = new ChessPosition(currentRow+direction,currentCol);
             if(board.getPiece(walk)==null){//no peice in front
-                moves.add(new ChessMove(myPosition,walk,null));
                 if(walk.row==8||walk.row==1){
                     moves.add(new ChessMove(myPosition,walk,ChessPiece.PieceType.ROOK));
                     moves.add(new ChessMove(myPosition,walk,ChessPiece.PieceType.BISHOP));
                     moves.add(new ChessMove(myPosition,walk,ChessPiece.PieceType.KNIGHT));
                     moves.add(new ChessMove(myPosition,walk,ChessPiece.PieceType.QUEEN));
+                }else{
+                    moves.add(new ChessMove(myPosition,walk,null));
                 }
             }
             //start jump
@@ -95,25 +96,29 @@ public class ChessPiece {
             ChessPosition takeRight = new ChessPosition(currentRow+direction,currentCol+1);
             if(takeRight.col>=1 && takeRight.col<=8){//make sure its in bounds
                 if(board.getPiece(takeRight)!=null&& board.getPiece(takeRight).getTeamColor()!=pieceColor){//not empty and not a friend
-                    moves.add(new ChessMove(myPosition,takeRight,null));
                     if(takeRight.row==8||takeRight.row==1){
                         moves.add(new ChessMove(myPosition,takeRight,ChessPiece.PieceType.ROOK));
                         moves.add(new ChessMove(myPosition,takeRight,ChessPiece.PieceType.BISHOP));
                         moves.add(new ChessMove(myPosition,takeRight,ChessPiece.PieceType.KNIGHT));
                         moves.add(new ChessMove(myPosition,takeRight,ChessPiece.PieceType.QUEEN));
+                    }else{
+                        moves.add(new ChessMove(myPosition,takeRight,null));
                     }
+
+
                 }
             }
             //take left
             ChessPosition takeLeft = new ChessPosition(currentRow+direction,currentCol-1);
             if(takeLeft.col>=1 && takeLeft.col<=8){//make sure its in bounds
                 if(board.getPiece(takeLeft)!=null&& board.getPiece(takeLeft).getTeamColor()!=pieceColor){//not empty and not a friend
-                    moves.add(new ChessMove(myPosition,takeLeft,null));
                     if(takeLeft.row==8||takeLeft.row==1){
                         moves.add(new ChessMove(myPosition,takeLeft,ChessPiece.PieceType.ROOK));
                         moves.add(new ChessMove(myPosition,takeLeft,ChessPiece.PieceType.BISHOP));
                         moves.add(new ChessMove(myPosition,takeLeft,ChessPiece.PieceType.KNIGHT));
                         moves.add(new ChessMove(myPosition,takeLeft,ChessPiece.PieceType.QUEEN));
+                    }else{
+                        moves.add(new ChessMove(myPosition,takeLeft,null));
                     }
                 }
             }
