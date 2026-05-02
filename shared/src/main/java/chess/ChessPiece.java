@@ -194,6 +194,40 @@ public class ChessPiece {
                     break;
                 }
             }
+        }else if(type==PieceType.ROOK){
+            for(int x=1;x<8;x++){
+                ChessPosition right = new ChessPosition(currentRow, currentCol+x);
+                if(PositionGood(board,right)) {
+                    moves.add(new ChessMove(myPosition,right,null));
+                    if(board.getPiece(right)!=null){break;};
+                }else{
+                    break;
+                }
+            }for(int x=1;x<8;x++){
+                ChessPosition left = new ChessPosition(currentRow, currentCol-x);
+                if(PositionGood(board,left)) {
+                    moves.add(new ChessMove(myPosition,left,null));
+                    if(board.getPiece(left)!=null){break;};
+                }else{
+                    break;
+                }
+            }for(int x=1;x<8;x++){
+                ChessPosition up = new ChessPosition(currentRow + x, currentCol);
+                if(PositionGood(board,up)) {
+                    moves.add(new ChessMove(myPosition,up,null));
+                    if(board.getPiece(up)!=null){break;};
+                }else{
+                    break;
+                }
+            }for(int x=1;x<8;x++){
+                ChessPosition down = new ChessPosition(currentRow - x, currentCol);
+                if(PositionGood(board,down)) {
+                    moves.add(new ChessMove(myPosition,down,null));
+                    if(board.getPiece(down)!=null){break;};
+                }else{
+                    break;
+                }
+            }
         }
 
         //we about to cook
