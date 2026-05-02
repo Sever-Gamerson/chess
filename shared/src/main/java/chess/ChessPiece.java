@@ -158,31 +158,39 @@ public class ChessPiece {
                 moves.add(new ChessMove(myPosition,bottomLeft,null));
             }
         }else if(type==PieceType.BISHOP){
-            for(int x=0;x<8;x++){
+            for(int x=1;x<8;x++){
                 ChessPosition topRight = new ChessPosition(currentRow + x, currentCol+x);
                 if(PositionGood(board,topRight)) {
                     moves.add(new ChessMove(myPosition,topRight,null));
+                    if(board.getPiece(topRight)!=null){break;};
+                }else{
                     break;
                 }
             }
-            for(int x=0;x<8;x++){
+            for(int x=1;x<8;x++){
                 ChessPosition topLeft = new ChessPosition(currentRow + x, currentCol-x);
                 if(PositionGood(board,topLeft)) {
                     moves.add(new ChessMove(myPosition,topLeft,null));
+                    if(board.getPiece(topLeft)!=null){break;};
+                }else{
                     break;
                 }
             }
-            for(int x=0;x<8;x++){
+            for(int x=1;x<8;x++){
                 ChessPosition bottomLeft = new ChessPosition(currentRow - x, currentCol-x);
                 if(PositionGood(board,bottomLeft)) {
                     moves.add(new ChessMove(myPosition,bottomLeft,null));
+                    if(board.getPiece(bottomLeft)!=null){break;};
+                }else{
                     break;
                 }
             }
-            for(int x=0;x<8;x++){
+            for(int x=1;x<8;x++){
                 ChessPosition bottomRight = new ChessPosition(currentRow - x, currentCol+x);
                 if(PositionGood(board,bottomRight)) {
                     moves.add(new ChessMove(myPosition,bottomRight,null));
+                    if(board.getPiece(bottomRight)!=null){break;};
+                }else{
                     break;
                 }
             }
