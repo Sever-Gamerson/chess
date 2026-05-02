@@ -298,6 +298,40 @@ public class ChessPiece {
                     break;
                 }
             }
+        }else if(type==PieceType.KING){
+            ChessPosition tL = new ChessPosition(currentRow + 1, currentCol-1);
+            if(PositionGood(board,tL)) {
+                moves.add(new ChessMove(myPosition,tL,null));
+            }
+            ChessPosition l = new ChessPosition(currentRow , currentCol-1);
+            if(PositionGood(board,l)) {
+                moves.add(new ChessMove(myPosition,l,null));
+            }
+            ChessPosition tR = new ChessPosition(currentRow + 1, currentCol+1);
+            if(PositionGood(board,tR)) {
+                moves.add(new ChessMove(myPosition,tR,null));
+            }
+            ChessPosition r = new ChessPosition(currentRow, currentCol+1);
+            if(PositionGood(board,r)) {
+                moves.add(new ChessMove(myPosition,r,null));
+            }
+            ChessPosition t = new ChessPosition(currentRow + 1, currentCol);
+            if(PositionGood(board,t)) {
+                moves.add(new ChessMove(myPosition,t,null));
+            }
+            ChessPosition d = new ChessPosition(currentRow - 1, currentCol);
+            if(PositionGood(board,d)) {
+                moves.add(new ChessMove(myPosition,d,null));
+            }
+            ChessPosition dR = new ChessPosition(currentRow - 1, currentCol+1);
+            if(PositionGood(board,dR)) {
+                moves.add(new ChessMove(myPosition,dR,null));
+            }
+            ChessPosition dL = new ChessPosition(currentRow - 1, currentCol-1);
+            if(PositionGood(board,dL)) {
+                moves.add(new ChessMove(myPosition,dL,null));
+            }
+
         }
 
         //we about to cook
