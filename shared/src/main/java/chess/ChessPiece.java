@@ -157,6 +157,35 @@ public class ChessPiece {
             if(PositionGood(board,bottomLeft)) {
                 moves.add(new ChessMove(myPosition,bottomLeft,null));
             }
+        }else if(type==PieceType.BISHOP){
+            for(int x=0;x<8;x++){
+                ChessPosition topRight = new ChessPosition(currentRow + x, currentCol+x);
+                if(PositionGood(board,topRight)) {
+                    moves.add(new ChessMove(myPosition,topRight,null));
+                    break;
+                }
+            }
+            for(int x=0;x<8;x++){
+                ChessPosition topLeft = new ChessPosition(currentRow + x, currentCol-x);
+                if(PositionGood(board,topLeft)) {
+                    moves.add(new ChessMove(myPosition,topLeft,null));
+                    break;
+                }
+            }
+            for(int x=0;x<8;x++){
+                ChessPosition bottomLeft = new ChessPosition(currentRow - x, currentCol-x);
+                if(PositionGood(board,bottomLeft)) {
+                    moves.add(new ChessMove(myPosition,bottomLeft,null));
+                    break;
+                }
+            }
+            for(int x=0;x<8;x++){
+                ChessPosition bottomRight = new ChessPosition(currentRow - x, currentCol+x);
+                if(PositionGood(board,bottomRight)) {
+                    moves.add(new ChessMove(myPosition,bottomRight,null));
+                    break;
+                }
+            }
         }
 
         //we about to cook
