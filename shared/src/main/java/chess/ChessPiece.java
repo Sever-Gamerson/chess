@@ -158,42 +158,13 @@ public class ChessPiece {
                 moves.add(new ChessMove(myPosition,bottomLeft,null));
             }
         }else if(type==PieceType.BISHOP){
-            for(int x=1;x<8;x++){
-                ChessPosition topRight = new ChessPosition(currentRow + x, currentCol+x);
-                if(PositionGood(board,topRight)) {
-                    moves.add(new ChessMove(myPosition,topRight,null));
-                    if(board.getPiece(topRight)!=null){break;};
-                }else{
-                    break;
-                }
+
+            int[][] positiveDirections ={{1,1},{1,-1}};
+
+            for(int i=0;i<positiveDirections.length ;i++){
+                sliddingMovesPositive(moves,board,myPosition,positiveDirections[i][0],positiveDirections[i][1]);
             }
-            for(int x=1;x<8;x++){
-                ChessPosition topLeft = new ChessPosition(currentRow + x, currentCol-x);
-                if(PositionGood(board,topLeft)) {
-                    moves.add(new ChessMove(myPosition,topLeft,null));
-                    if(board.getPiece(topLeft)!=null){break;};
-                }else{
-                    break;
-                }
-            }
-            for(int x=1;x<8;x++){
-                ChessPosition bottomLeft = new ChessPosition(currentRow - x, currentCol-x);
-                if(PositionGood(board,bottomLeft)) {
-                    moves.add(new ChessMove(myPosition,bottomLeft,null));
-                    if(board.getPiece(bottomLeft)!=null){break;};
-                }else{
-                    break;
-                }
-            }
-            for(int x=1;x<8;x++){
-                ChessPosition bottomRight = new ChessPosition(currentRow - x, currentCol+x);
-                if(PositionGood(board,bottomRight)) {
-                    moves.add(new ChessMove(myPosition,bottomRight,null));
-                    if(board.getPiece(bottomRight)!=null){break;};
-                }else{
-                    break;
-                }
-            }
+
         }else if(type==PieceType.ROOK){
             for(int x=1;x<8;x++){
                 ChessPosition right = new ChessPosition(currentRow, currentCol+x);
@@ -345,6 +316,26 @@ public class ChessPiece {
             }
         }
         return false;
+    }
+    private void sliddingMovesPositive(Collection<ChessMove> moves,ChessBoard board, ChessPosition pos, int dRow, int dCol){
+
+        for(int x=1;x<8;x++){
+            ChessPosition checkPositive = new ChessPosition(pos.row +dRow*x, pos.col+dCol*x);
+            if(!PositionGood(board,checkPositive)) {break;}
+
+
+            moves.add(new ChessMove(pos,checkPositive,null));
+            if(board.getPiece(checkPositive)!=null){break;};
+        }
+        //do the same backwards
+        for(int x=1;x<8;x++){
+            ChessPosition checkNegitive = new ChessPosition(pos.row -dRow*x, pos.col-dCol*x);
+            if(!PositionGood(board,checkNegitive)) {break;}
+
+
+            moves.add(new ChessMove(pos,checkNegitive,null));
+            if(board.getPiece(checkNegitive)!=null){break;};
+        }
     }
 
     @Override
