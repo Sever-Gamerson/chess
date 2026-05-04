@@ -124,38 +124,12 @@ public class ChessPiece {
             }
 
         }else if(type==PieceType.KNIGHT) {
-            ChessPosition topRight = new ChessPosition(currentRow + 2, currentCol+1);
-            if(PositionGood(board,topRight)) {
-                moves.add(new ChessMove(myPosition,topRight,null));
-            }
-            ChessPosition rightUp = new ChessPosition(currentRow + 1, currentCol+2);
-            if(PositionGood(board,rightUp)) {
-                moves.add(new ChessMove(myPosition,rightUp,null));
-            }
-            ChessPosition rightDown = new ChessPosition(currentRow - 1, currentCol+2);
-            if(PositionGood(board,rightDown)) {
-                moves.add(new ChessMove(myPosition,rightDown,null));
-            }
-            ChessPosition bottomRight = new ChessPosition(currentRow - 2, currentCol+1);
-            if(PositionGood(board,bottomRight)) {
-                moves.add(new ChessMove(myPosition,bottomRight,null));
-            }
-            //left ones
-            ChessPosition topLeft = new ChessPosition(currentRow + 2, currentCol-1);
-            if(PositionGood(board,topLeft)) {
-                moves.add(new ChessMove(myPosition,topLeft,null));
-            }
-            ChessPosition leftUp = new ChessPosition(currentRow + 1, currentCol-2);
-            if(PositionGood(board,leftUp)) {
-                moves.add(new ChessMove(myPosition,leftUp,null));
-            }
-            ChessPosition leftDown = new ChessPosition(currentRow - 1, currentCol-2);
-            if(PositionGood(board,leftDown)) {
-                moves.add(new ChessMove(myPosition,leftDown,null));
-            }
-            ChessPosition bottomLeft = new ChessPosition(currentRow - 2, currentCol-1);
-            if(PositionGood(board,bottomLeft)) {
-                moves.add(new ChessMove(myPosition,bottomLeft,null));
+            int[][] directions ={ {2,1}, {1,2}, {-1,2}, {-2,1},{2,-1}, {1,-2}, {-1,-2}, {-2,-1}};
+            for(int i=0;i<directions.length ;i++){
+                ChessPosition pos = new ChessPosition(myPosition.row+directions[i][0], myPosition.col+directions[i][1]);
+                if(PositionGood(board,pos)) {
+                    moves.add(new ChessMove(myPosition,pos,null));
+                }
             }
         }else if(type==PieceType.BISHOP){
 
@@ -180,39 +154,13 @@ public class ChessPiece {
 
             }
         }else if(type==PieceType.KING){
-            ChessPosition tL = new ChessPosition(currentRow + 1, currentCol-1);
-            if(PositionGood(board,tL)) {
-                moves.add(new ChessMove(myPosition,tL,null));
+            int[][] directions ={{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1}};
+            for(int i=0;i<directions.length ;i++){
+                ChessPosition kingPos = new ChessPosition(myPosition.row+directions[i][0], myPosition.col+directions[i][1]);
+                if(PositionGood(board,kingPos)) {
+                    moves.add(new ChessMove(myPosition,kingPos,null));
+                }
             }
-            ChessPosition l = new ChessPosition(currentRow , currentCol-1);
-            if(PositionGood(board,l)) {
-                moves.add(new ChessMove(myPosition,l,null));
-            }
-            ChessPosition tR = new ChessPosition(currentRow + 1, currentCol+1);
-            if(PositionGood(board,tR)) {
-                moves.add(new ChessMove(myPosition,tR,null));
-            }
-            ChessPosition r = new ChessPosition(currentRow, currentCol+1);
-            if(PositionGood(board,r)) {
-                moves.add(new ChessMove(myPosition,r,null));
-            }
-            ChessPosition t = new ChessPosition(currentRow + 1, currentCol);
-            if(PositionGood(board,t)) {
-                moves.add(new ChessMove(myPosition,t,null));
-            }
-            ChessPosition d = new ChessPosition(currentRow - 1, currentCol);
-            if(PositionGood(board,d)) {
-                moves.add(new ChessMove(myPosition,d,null));
-            }
-            ChessPosition dR = new ChessPosition(currentRow - 1, currentCol+1);
-            if(PositionGood(board,dR)) {
-                moves.add(new ChessMove(myPosition,dR,null));
-            }
-            ChessPosition dL = new ChessPosition(currentRow - 1, currentCol-1);
-            if(PositionGood(board,dL)) {
-                moves.add(new ChessMove(myPosition,dL,null));
-            }
-
         }
 
         //we about to cook
