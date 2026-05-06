@@ -181,7 +181,6 @@ public class ChessPiece {
             ChessPosition checkPositive = new ChessPosition(pos.row +dRow*x, pos.col+dCol*x);
             if(!PositionGood(board,checkPositive)) {break;}
 
-
             moves.add(new ChessMove(pos,checkPositive,null));
             if(board.getPiece(checkPositive)!=null){break;};
         }
