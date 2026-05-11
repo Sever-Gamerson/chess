@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * A class that can manage a chess game, making moves on a board
@@ -57,8 +58,12 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+
         ChessBoard gameBoard = getBoard();
         ChessPiece selectedPiece= gameBoard.getPiece(startPosition);
+        if(selectedPiece == null){
+            return null;
+        }
         return selectedPiece.pieceMoves(gameBoard,startPosition);
 
     }
@@ -71,13 +76,43 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessBoard gameBoard = getBoard();
-        gameBoard.gameBoard[move.endPosition.row-1][move.endPosition.col-1]=gameBoard.getPiece(move.startPosition);
-        gameBoard.gameBoard[move.startPosition.row-1][move.startPosition.col-1]=null;
+        ChessPiece currentPiece=gameBoard.getPiece(move.startPosition);
 
-        setBoard(gameBoard);
+        if(currentPiece!=null){//piece exists
+            TeamColor teamColor=currentPiece.getTeamColor();
+            if(teamColor==getTeamTurn()){//correct turn
+                if(validMoves(move.startPosition).contains(move)){//valid move
+                    if(currentPiece.getPieceType()== ChessPiece.PieceType.KING){
+                        if(beingAttacked(move.startPosition, teamColor,gameBoard)){
+                            throw new InvalidMoveException();
+                        }
+                    }
 
-        moveNumber+=1;
-        setTeamTurn(getTeamTurn());
+                    if(move.promotionPiece!=null){gameBoard.gameBoard[move.endPosition.row-1][move.endPosition.col-1]=new ChessPiece(teamColor,move.promotionPiece);}//if it promoted
+                    else{gameBoard.gameBoard[move.endPosition.row-1][move.endPosition.col-1]=gameBoard.getPiece(move.startPosition);}//didnt promote
+                    gameBoard.gameBoard[move.startPosition.row-1][move.startPosition.col-1]=null;
+
+
+
+
+                        ChessBoard holdGameBoard=getBoard();
+                        setBoard(gameBoard);
+                    if(isInCheck(teamColor)){
+                        setBoard(holdGameBoard);
+                        throw new InvalidMoveException();
+                    }
+
+                    //next turn
+                    moveNumber+=1;
+                    setTeamTurn(getTeamTurn());
+
+
+
+                }
+            }
+        }
+
+
     }
 
     /**
@@ -89,12 +124,14 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         ChessBoard gameBoard = getBoard();
         ChessPosition kingPos=new ChessPosition(1,1);
-        for(int row=1;row<8;row++){
-            for(int col=1;col<8;col++){
+        boolean found=false;
+        for(int row=1;row<=8 &&!found;row++){
+            for(int col=1;col<=8;col++){
                 kingPos=new ChessPosition(row,col);
                 ChessPiece currentPiece=gameBoard.getPiece(kingPos);
                 if(currentPiece!=null){
                     if(currentPiece.getTeamColor()==teamColor&&currentPiece.getPieceType()== ChessPiece.PieceType.KING){
+                        found=true;
                         break;
                     }
                 }
@@ -106,8 +143,8 @@ public class ChessGame {
 
     }
     public boolean beingAttacked(ChessPosition pos, TeamColor myTeamColor,ChessBoard gameBoard){
-        for(int row=1;row<8;row++) {
-            for (int col=1; col<8; col++) {
+        for(int row=1;row<=8;row++) {
+            for (int col=1; col<=8; col++) {
                 ChessPosition checkPosition = new ChessPosition(row, col);
                 ChessPiece currentPiece=gameBoard.getPiece(checkPosition);
                 if ( currentPiece!= null) {
@@ -167,5 +204,20 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return chessBoard;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return moveNumber == chessGame.moveNumber && teamTurn == chessGame.teamTurn && Objects.equals(chessBoard, chessGame.chessBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(moveNumber, teamTurn, chessBoard);
     }
 }
