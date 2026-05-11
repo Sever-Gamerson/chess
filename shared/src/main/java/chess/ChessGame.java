@@ -78,39 +78,45 @@ public class ChessGame {
         ChessBoard gameBoard = getBoard();
         ChessPiece currentPiece=gameBoard.getPiece(move.startPosition);
 
-        if(currentPiece!=null){//piece exists
+        if(currentPiece==null){throw new InvalidMoveException(); }//piece exists
             TeamColor teamColor=currentPiece.getTeamColor();
-            if(teamColor==getTeamTurn()){//correct turn
-                if(validMoves(move.startPosition).contains(move)){//valid move
-                    if(currentPiece.getPieceType()== ChessPiece.PieceType.KING){
-                        if(beingAttacked(move.startPosition, teamColor,gameBoard)){
-                            throw new InvalidMoveException();
-                        }
-                    }
 
-                    if(move.promotionPiece!=null){gameBoard.gameBoard[move.endPosition.row-1][move.endPosition.col-1]=new ChessPiece(teamColor,move.promotionPiece);}//if it promoted
-                    else{gameBoard.gameBoard[move.endPosition.row-1][move.endPosition.col-1]=gameBoard.getPiece(move.startPosition);}//didnt promote
-                    gameBoard.gameBoard[move.startPosition.row-1][move.startPosition.col-1]=null;
+        if(teamColor!=getTeamTurn()){throw new InvalidMoveException(); }//correct turn
+
+        if(!validMoves(move.startPosition).contains(move)){throw new InvalidMoveException(); }//valid move
 
 
 
-
-                        ChessBoard holdGameBoard=getBoard();
-                        setBoard(gameBoard);
-                    if(isInCheck(teamColor)){
-                        setBoard(holdGameBoard);
-                        throw new InvalidMoveException();
-                    }
-
-                    //next turn
-                    moveNumber+=1;
-                    setTeamTurn(getTeamTurn());
-
-
-
-                }
+        if(currentPiece.getPieceType()== ChessPiece.PieceType.KING){
+            if(beingAttacked(move.startPosition, teamColor,gameBoard)){
+                throw new InvalidMoveException();
             }
         }
+
+        if(move.promotionPiece!=null){gameBoard.gameBoard[move.endPosition.row-1][move.endPosition.col-1]=new ChessPiece(teamColor,move.promotionPiece);}//if it promoted
+        else{gameBoard.gameBoard[move.endPosition.row-1][move.endPosition.col-1]=gameBoard.getPiece(move.startPosition);}//didnt promote
+        gameBoard.gameBoard[move.startPosition.row-1][move.startPosition.col-1]=null;
+
+
+
+
+        ChessBoard holdGameBoard=getBoard();
+        setBoard(gameBoard);
+
+        if(isInCheck(teamColor)){
+            setBoard(holdGameBoard);
+            throw new InvalidMoveException();
+        }
+
+        //next turn
+        moveNumber+=1;
+        setTeamTurn(getTeamTurn());
+
+
+
+
+
+
 
 
     }
