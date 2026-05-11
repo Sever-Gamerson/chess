@@ -65,6 +65,7 @@ public class ChessPiece {
 
         int currentRow= myPosition.row;
         int currentCol= myPosition.col;
+
         if(type==PieceType.PAWN){
 
             int direction= 1;
