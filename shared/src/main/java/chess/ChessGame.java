@@ -55,7 +55,6 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
 
         ChessBoard board = getBoard();
-        ChessBoard copyGameBoard = getBoard();
         ChessPiece piece = board.getPiece(startPosition);
 
         if (piece == null) {
@@ -66,7 +65,6 @@ public class ChessGame {
         Collection<ChessMove> finalMoves = piece.pieceMoves(board, startPosition);
 
         for (ChessMove move : moves) {
-
             ChessPiece capturedPiece = board.getPiece(move.endPosition);
             ChessPiece movingPiece = board.getPiece(move.startPosition);
 
@@ -151,18 +149,14 @@ public class ChessGame {
             for (int col=1; col<=8; col++) {
                 ChessPosition checkPosition = new ChessPosition(row, col);
                 ChessPiece currentPiece=gameBoard.getPiece(checkPosition);
-                if ( currentPiece!= null) {
-                    if(currentPiece.getTeamColor()!=myTeamColor){
-                        Collection<ChessMove> moves= currentPiece.pieceMoves(gameBoard,checkPosition);
-                        for(ChessMove move:moves){
-                            if(move.getEndPosition().equals(pos)){
-                                return true;
-                            }
+                if (currentPiece!= null&&currentPiece.getTeamColor()!=myTeamColor) {
+                    Collection<ChessMove> moves= currentPiece.pieceMoves(gameBoard,checkPosition);
+                    for(ChessMove move:moves){
+                        if(move.getEndPosition().equals(pos)){
+                            return true;
                         }
                     }
-
                 }
-
             }
         }
         return false;
@@ -172,7 +166,7 @@ public class ChessGame {
 
     public ChessPosition findKingPos(TeamColor teamColor){
         ChessBoard gameBoard = getBoard();
-        ChessPosition kingPos=new ChessPosition(1,1);
+        ChessPosition kingPos;
         for(int row=1;row<=8 ;row++){
             for(int col=1;col<=8;col++){
                 kingPos=new ChessPosition(row,col);

@@ -73,7 +73,7 @@ public class ChessPiece {
 
             //normal move
             ChessPosition walk = new ChessPosition(currentRow+direction,currentCol);
-            if(board.getPiece(walk)==null){//no peice in front
+            if(board.getPiece(walk)==null){//no piece in front
                 if(walk.row==8||walk.row==1){
                     moves.add(new ChessMove(myPosition,walk,ChessPiece.PieceType.ROOK));
                     moves.add(new ChessMove(myPosition,walk,ChessPiece.PieceType.BISHOP));
@@ -85,7 +85,7 @@ public class ChessPiece {
             }
             //start jump
             if((pieceColor== ChessGame.TeamColor.BLACK && currentRow==7)||(pieceColor== ChessGame.TeamColor.WHITE && currentRow==2)){
-                if(board.getPiece(walk)==null){//has to make sure there's no peice in front still
+                if(board.getPiece(walk)==null){//has to make sure there's no piece in front still
                     ChessPosition run = new ChessPosition(currentRow+direction*2,currentCol);
 
                     if(board.getPiece(run)==null){
