@@ -225,6 +225,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        ChessBoard gameBoard = getBoard();
         if (isInCheck(teamColor)) {
             return false;
         }
@@ -232,7 +233,7 @@ public class ChessGame {
             for (int col = 1; col <= 8; col++) {
 
                 ChessPosition pos = new ChessPosition(row, col);
-                if(!validMoves(pos).isEmpty()){
+                if(!validMoves(pos).isEmpty() && gameBoard.getPiece(pos).getTeamColor()==teamColor){
                     return false;
                 }
             }
