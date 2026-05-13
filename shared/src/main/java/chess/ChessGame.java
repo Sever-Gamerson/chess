@@ -10,7 +10,6 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
-    public int moveNumber=0;
     public TeamColor teamTurn =TeamColor.WHITE;
 
     private ChessBoard chessBoard;
@@ -265,11 +264,11 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return moveNumber == chessGame.moveNumber && teamTurn == chessGame.teamTurn && Objects.equals(chessBoard, chessGame.chessBoard);
+        return teamTurn == chessGame.teamTurn && Objects.equals(chessBoard, chessGame.chessBoard);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(moveNumber, teamTurn, chessBoard);
+        return Objects.hash(teamTurn, chessBoard);
     }
 }
