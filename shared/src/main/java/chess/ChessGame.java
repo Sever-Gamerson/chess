@@ -174,14 +174,12 @@ public class ChessGame {
     public ChessPosition findKingPos(TeamColor teamColor){
         ChessBoard gameBoard = getBoard();
         ChessPosition kingPos=new ChessPosition(1,1);
-        boolean found=false;
-        for(int row=1;row<=8 &&!found;row++){
+        for(int row=1;row<=8 ;row++){
             for(int col=1;col<=8;col++){
                 kingPos=new ChessPosition(row,col);
                 ChessPiece currentPiece=gameBoard.getPiece(kingPos);
                 if(currentPiece!=null){
                     if(currentPiece.getTeamColor()==teamColor&&currentPiece.getPieceType()== ChessPiece.PieceType.KING){
-                        found=true;
                         return kingPos;
                     }
                 }
