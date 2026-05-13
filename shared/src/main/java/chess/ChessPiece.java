@@ -105,8 +105,6 @@ public class ChessPiece {
                     }else{
                         moves.add(new ChessMove(myPosition,takeRight,null));
                     }
-
-
                 }
             }
             //take left
@@ -126,35 +124,35 @@ public class ChessPiece {
 
         }else if(currentPiece.getPieceType()==PieceType.KNIGHT){
             int[][] direction={{2,1},{1,2},{-1,2},{-2,1},{-2,-1},{-1,-2},{1,-2},{2,-1}};
-            for(int i=0; i<direction.length;i++){
-                ChessPosition newPos= new ChessPosition(currentRow+direction[i][0],currentCol+direction[i][1]);
-                if(PositionGood(board,newPos,myPosition)){
-                    moves.add(new ChessMove(myPosition,newPos,null));
+            for (int[] ints : direction) {
+                ChessPosition newPos = new ChessPosition(currentRow + ints[0], currentCol + ints[1]);
+                if (PositionGood(board, newPos, myPosition)) {
+                    moves.add(new ChessMove(myPosition, newPos, null));
                 }
             }
 
         }else if(currentPiece.getPieceType()==PieceType.BISHOP){
             int[][] direction={{1,1},{-1,1},{-1,-1},{1,-1}};
-            for(int i=0; i<direction.length;i++){
-                SlidingPeice(board,myPosition,direction[i][0],direction[i][1],moves);
+            for (int[] ints : direction) {
+                SlidingPiece(board, myPosition, ints[0], ints[1], moves);
 
             }
         }else if(currentPiece.getPieceType()==PieceType.ROOK){
             int[][] direction={{1,0},{0,1},{-1,0},{0,-1}};
-            for(int i=0; i<direction.length;i++){
-                SlidingPeice(board,myPosition,direction[i][0],direction[i][1],moves);
+            for (int[] ints : direction) {
+                SlidingPiece(board, myPosition, ints[0], ints[1], moves);
             }
         }else if(currentPiece.getPieceType()==PieceType.QUEEN){
             int[][] direction={{1,0},{0,1},{-1,0},{0,-1},{1,1},{-1,1},{-1,-1},{1,-1}};
-            for(int i=0; i<direction.length;i++){
-                SlidingPeice(board,myPosition,direction[i][0],direction[i][1],moves);
+            for (int[] ints : direction) {
+                SlidingPiece(board, myPosition, ints[0], ints[1], moves);
             }
         }else if(currentPiece.getPieceType()==PieceType.KING){
             int[][] direction={{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1}};
-            for(int i=0; i<direction.length;i++){
-                ChessPosition newPos= new ChessPosition(currentRow+direction[i][0],currentCol+direction[i][1]);
-                if(PositionGood(board,newPos,myPosition)){
-                    moves.add(new ChessMove(myPosition,newPos,null));
+            for (int[] ints : direction) {
+                ChessPosition newPos = new ChessPosition(currentRow + ints[0], currentCol + ints[1]);
+                if (PositionGood(board, newPos, myPosition)) {
+                    moves.add(new ChessMove(myPosition, newPos, null));
                 }
             }
         }
@@ -165,13 +163,11 @@ public class ChessPiece {
     }
     private boolean PositionGood(ChessBoard board, ChessPosition pos,ChessPosition myPosition){
         if(pos.row>0&&pos.row<9&&pos.col>0&&pos.col<9){
-            if(board.getPiece(pos)==null||board.getPiece(pos).pieceColor!=board.getPiece(myPosition).pieceColor){
-                return true;
-            }
+            return board.getPiece(pos) == null || board.getPiece(pos).pieceColor != board.getPiece(myPosition).pieceColor;
         }
         return false;
     }
-    private void SlidingPeice(ChessBoard board,ChessPosition myPosition,int dRow,int dCol,Collection<ChessMove> moves){
+    private void SlidingPiece(ChessBoard board,ChessPosition myPosition,int dRow,int dCol,Collection<ChessMove> moves){
 
         for(int i=1; i<8;i++){
             ChessPosition newPos=new ChessPosition(myPosition.row+dRow*i,myPosition.col+dCol*i);
