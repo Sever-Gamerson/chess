@@ -17,7 +17,7 @@ public class MemoryDataAccess {
 
 
     private final Map<String,UserData> users=new HashMap<>();
-    private final Map<String,GameData> auths=new HashMap<>();
+    private final Map<String,AuthData> auths=new HashMap<>();
     private final Map<Integer, GameData> games=new HashMap<>();
 
     private int newGameID=1;
@@ -58,6 +58,25 @@ public class MemoryDataAccess {
 
     public List<GameData> listGames() throws DataAccessException{
         return new ArrayList<>(games.values());
+    }
+
+    public void updateGame(GameData game) throws DataAccessException{
+        if(!games.containsKey(game.gameID())){
+            throw new DataAccessException("Game Not Found");
+        }
+
+        games.put(game.gameID(),game);//replace the game with the updated one
+    }
+    public void createAuth(AuthData auth) throws DataAccessException{
+        auths.put(auth.authToken(), auth);
+    }
+
+    public AuthData getAuth(String authToken) throws DataAccessException{
+        return auths.get(authToken);
+    }
+
+    public void removeAuth(String authToken) throws DataAccessException{
+        auths.remove(authToken);
     }
 
 }
