@@ -64,7 +64,6 @@ public class MemoryDataAccess {
         if(!games.containsKey(game.gameID())){
             throw new DataAccessException("Game Not Found");
         }
-
         games.put(game.gameID(),game);//replace the game with the updated one
     }
     public void createAuth(AuthData auth) throws DataAccessException{
