@@ -13,16 +13,19 @@ public class ClearHandler {
     public ClearHandler(ClearService clearService){
         this.clearService=clearService;
     }
-
+    //calls clear service and returns anything that goes wrong
     public void clear(Context ctx){
         try {
 
-            clearService.clear();
+            clearService.clear();//call clear service
             ctx.status(200).result("{}");
 
         }catch (DataAccessException e){
 
-            ctx.status(500).json(new ErrorResponse("Error: " + e.getMessage()));
+            if(e.getMessage()!=null){
+                ctx.status(500).json(new Error("Error: " + e.getMessage()));
+            }
+
         }
     }
 }
