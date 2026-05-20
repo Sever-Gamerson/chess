@@ -37,7 +37,39 @@ public class UserHandler {
             } else if (msg.contains("Already Taken")) {
                 ctx.status(403).json(new Error("Already Taken"));
             } else {
+                //dont forget anything else
+                ctx.status(500).json(new Error(msg));
+            }
+        }
+    }
+    //checks if loggedin in userservice
+    public void login(Context ctx){
+        try{
+            UserData user = gson.fromJson(ctx.body(),UserData.class);
+            AuthData auth=userService.login(user.username(),user.password());
 
+            ctx.status(200).json(auth);
+        } catch(DataAccessException e) {
+            String msg =e.getMessage();
+            if(msg.contains("unauthorized")){
+                ctx.status(401).json(new Error("unauthorized"));
+            }else{
+                ctx.status(500).json(new Error(msg));
+            }
+        }
+    }
+
+    public void logout(Context ctx){
+        try{
+            String authToken = ctx.header("authorization");
+            userService.logout(authToken);
+
+            ctx.status(200).json("{}");
+        } catch (DataAccessException e) {
+            String msg=e.getMessage();
+            if(msg.contains("unauthorized")) {
+                ctx.status(401).json(new Error("unauthorized"));
+            }else{
                 ctx.status(500).json(new Error(msg));
             }
         }
