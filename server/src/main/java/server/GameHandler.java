@@ -29,9 +29,9 @@ public class GameHandler {
             String msg=e.getMessage();
 
             if(msg.contains("unauthorized")) {
-                ctx.status(401).result(gson.toJson(new Error("unauthorized")));
+                ctx.status(401).result(gson.toJson(new ErrorResponse("Error: unauthorized")));
             }else {
-                ctx.status(500).result(gson.toJson(new Error(msg)));
+                ctx.status(500).result(gson.toJson(new ErrorResponse("Error: " + msg)));
             }
 
         }
@@ -49,11 +49,11 @@ public class GameHandler {
             String msg=e.getMessage();
 
             if (msg.contains("Bad Request")) {
-                ctx.status(400).result(gson.toJson(new Error("Bad Request")));
+                ctx.status(400).result(gson.toJson(new ErrorResponse("Error: bad request")));
             } else if(msg.contains("unauthorized")) {
-                ctx.status(401).result(gson.toJson(new Error("unauthorized")));
+                ctx.status(401).result(gson.toJson(new ErrorResponse("Error: unauthorized")));
             }else {
-                ctx.status(500).result(gson.toJson(new Error(msg)));
+                ctx.status(500).result(gson.toJson(new ErrorResponse("Error: " + msg)));
             }
 
         }
@@ -72,13 +72,13 @@ public class GameHandler {
             String msg=e.getMessage();
 
             if (msg.contains("Bad Request")) {
-                ctx.status(400).result(gson.toJson(new Error("Bad Request")));
+                ctx.status(400).result(gson.toJson(new ErrorResponse("Error: bad request")));
             } else if(msg.contains("unauthorized")) {
-                ctx.status(401).result(gson.toJson(new Error("unauthorized")));
+                ctx.status(401).result(gson.toJson(new ErrorResponse("Error: unauthorized")));
             } else if(msg.contains("Team Taken")) {
-                ctx.status(403).result(gson.toJson(new Error("already taken")));
+                ctx.status(403).result(gson.toJson(new ErrorResponse("Error: already taken")));
             }else {
-                ctx.status(500).result(gson.toJson(new Error(msg)));
+                ctx.status(500).result(gson.toJson(new ErrorResponse("Error: " + msg)));
             }
         }
     }

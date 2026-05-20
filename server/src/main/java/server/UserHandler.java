@@ -32,13 +32,13 @@ public class UserHandler {
             String msg = e.getMessage();
             if (msg.contains("Bad Request")) {
                 //new error is the only thing that worked I don't know
-                ctx.status(400).result(gson.toJson(new Error("Error: bad request")));
+                ctx.status(400).result(gson.toJson(new ErrorResponse("Error: bad request")));
 
             } else if (msg.contains("Already Taken")) {
-                ctx.status(403).result(gson.toJson("Error: already taken"));
+                ctx.status(403).result(gson.toJson(new ErrorResponse("Error: already taken")));
             } else {
                 //dont forget anything else
-                ctx.status(500).result(gson.toJson(new Error("Error: " + msg)));
+                ctx.status(500).result(gson.toJson(new ErrorResponse("Error: " + msg)));
             }
         }
     }
@@ -52,9 +52,9 @@ public class UserHandler {
         } catch(DataAccessException e) {
             String msg =e.getMessage();
             if(msg.contains("unauthorized")){
-                ctx.status(401).result(gson.toJson(new Error("Error: unauthorized")));
+                ctx.status(401).result(gson.toJson(new ErrorResponse("Error: unauthorized")));
             }else{
-                ctx.status(500).result(gson.toJson(new Error("Error: " + msg)));
+                ctx.status(500).result(gson.toJson(new ErrorResponse("Error: " + msg)));
             }
         }
     }
@@ -68,11 +68,11 @@ public class UserHandler {
         } catch (DataAccessException e) {
             String msg=e.getMessage();
             if(msg.contains("Bad Request")){
-                ctx.status(400).result(gson.toJson(new Error("Error: bad request")));
+                ctx.status(400).result(gson.toJson(new ErrorResponse("Error: bad request")));
             }else if(msg.contains("unauthorized")){
-                ctx.status(401).result(gson.toJson(new Error("Error: unauthorized")));
+                ctx.status(401).result(gson.toJson(new ErrorResponse("Error: unauthorized")));
             }else{
-                ctx.status(500).result(gson.toJson(new Error("Error: " + msg)));
+                ctx.status(500).result(gson.toJson(new ErrorResponse("Error: " + msg)));
             }
         }
     }
