@@ -74,7 +74,7 @@ public class MemoryDataAccess {
         return auths.get(authToken);
     }
 
-    public void removeAuth(String authToken) throws DataAccessException{
+    public void deleteAuth(String authToken) throws DataAccessException{
         auths.remove(authToken);
     }
 

@@ -47,6 +47,12 @@ public class UserService {
 
     }
 
+    public void logout(String authToken) throws DataAccessException{
+        if(dataAccess.getAuth(authToken)==null){
+            throw new DataAccessException("unauthorized");//user not loged in
+        }
+        dataAccess.deleteAuth(authToken);
+    }
 
 
 }
