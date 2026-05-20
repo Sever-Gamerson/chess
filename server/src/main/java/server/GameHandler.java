@@ -1,4 +1,5 @@
 package server;
+import model.JoinData;
 import service.GameService;
 import com.google.gson.Gson;
 
@@ -61,11 +62,13 @@ public class GameHandler {
     public void joinGame(Context ctx){
         try{
             String authToken=ctx.header("authorization");
+            JoinData joinData=gson.fromJson(ctx.body(),JoinData.class);
 
+            gameService.joinGame(authToken, joinData.gameID(), joinData.teamColor());
 
+            ctx.status(200).result("{}");
 
-
-        } catch (RuntimeException e) {
+        }catch (DataAccessException e) {
             String msg=e.getMessage();
 
             if (msg.contains("Bad Request")) {
