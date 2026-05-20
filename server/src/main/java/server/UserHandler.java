@@ -51,7 +51,9 @@ public class UserHandler {
             ctx.status(200).result(gson.toJson(auth));
         } catch(DataAccessException e) {
             String msg =e.getMessage();
-            if(msg.contains("unauthorized")){
+            if(msg.contains("Bad Request")){
+                ctx.status(400).result(gson.toJson(new ErrorResponse("Error: bad request")));
+            }else if(msg.contains("unauthorized")){
                 ctx.status(401).result(gson.toJson(new ErrorResponse("Error: unauthorized")));
             }else{
                 ctx.status(500).result(gson.toJson(new ErrorResponse("Error: " + msg)));
