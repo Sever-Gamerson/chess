@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
-public class MemoryDataAccess {
+public class MemoryDataAccess implements DataAccess {
 
 
     private final Map<String,UserData> users=new HashMap<>();
