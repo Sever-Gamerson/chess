@@ -34,6 +34,10 @@ public class UserService {
 
 
     public AuthData login(String userName,String password) throws DataAccessException{
+        if(userName == null || password == null){
+            throw new DataAccessException("Bad Request");
+        }
+
         UserData user= dataAccess.getUser(userName);
 
         if(user==null || !user.password().equals(password)){

@@ -48,6 +48,9 @@ public class GameService {
         String whiteName=game.whiteUsername();
         String blackName=game.blackUsername();
 
+        if(playerColor == null || playerColor.isEmpty()){
+            throw new DataAccessException("Bad Request");
+        }
         if(playerColor.equalsIgnoreCase("WHITE")){
             if(whiteName!=null){
                 throw new DataAccessException("Team Taken");

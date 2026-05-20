@@ -26,19 +26,19 @@ public class UserHandler {
             UserData user = gson.fromJson(ctx.body(), UserData.class);
             AuthData auth = userService.register(user, user.username());
 
-            ctx.status(200).json(auth);
+            ctx.status(200).result(gson.toJson(auth));
 
         } catch (DataAccessException e) {
             String msg = e.getMessage();
             if (msg.contains("Bad Request")) {
                 //new error is the only thing that worked I don't know
-                ctx.status(400).json(new Error("Bad Request"));
+                ctx.status(400).result(gson.toJson(new Error("Error: bad request")));
 
             } else if (msg.contains("Already Taken")) {
-                ctx.status(403).json(new Error("Already Taken"));
+                ctx.status(403).result(gson.toJson("Error: already taken"));
             } else {
                 //dont forget anything else
-                ctx.status(500).json(new Error(msg));
+                ctx.status(500).result(gson.toJson(new Error("Error: " + msg)));
             }
         }
     }
@@ -48,13 +48,13 @@ public class UserHandler {
             UserData user = gson.fromJson(ctx.body(),UserData.class);
             AuthData auth=userService.login(user.username(),user.password());
 
-            ctx.status(200).json(auth);
+            ctx.status(200).result(gson.toJson(auth));
         } catch(DataAccessException e) {
             String msg =e.getMessage();
             if(msg.contains("unauthorized")){
-                ctx.status(401).json(new Error("unauthorized"));
+                ctx.status(401).result(gson.toJson(new Error("Error: unauthorized")));
             }else{
-                ctx.status(500).json(new Error(msg));
+                ctx.status(500).result(gson.toJson(new Error("Error: " + msg)));
             }
         }
     }
@@ -64,13 +64,15 @@ public class UserHandler {
             String authToken = ctx.header("authorization");
             userService.logout(authToken);
 
-            ctx.status(200).json("{}");
+            ctx.status(200).result("{}");
         } catch (DataAccessException e) {
             String msg=e.getMessage();
-            if(msg.contains("unauthorized")) {
-                ctx.status(401).json(new Error("unauthorized"));
+            if(msg.contains("Bad Request")){
+                ctx.status(400).result(gson.toJson(new Error("Error: bad request")));
+            }else if(msg.contains("unauthorized")){
+                ctx.status(401).result(gson.toJson(new Error("Error: unauthorized")));
             }else{
-                ctx.status(500).json(new Error(msg));
+                ctx.status(500).result(gson.toJson(new Error("Error: " + msg)));
             }
         }
     }

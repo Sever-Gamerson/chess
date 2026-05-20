@@ -23,7 +23,7 @@ public class ClearHandler {
         }catch (DataAccessException e){
 
             if(e.getMessage()!=null){
-                ctx.status(500).json(new Error("Error: " + e.getMessage()));
+                ctx.status(500).result(gson.toJson(new Error("Error: " + e.getMessage())));
             }
 
         }

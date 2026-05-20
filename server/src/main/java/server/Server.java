@@ -3,7 +3,7 @@ package server;
 import io.javalin.*;
 
 import dataaccess.DataAccess;
-
+import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 
 import service.ClearService;

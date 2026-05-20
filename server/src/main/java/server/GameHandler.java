@@ -1,5 +1,5 @@
 package server;
-import model.JoinData;
+
 import service.GameService;
 import com.google.gson.Gson;
 
@@ -7,8 +7,8 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import model.GameData;
+import model.JoinData;
 
-import javax.xml.crypto.Data;
 import java.util.List;
 import java.util.Map;
 
@@ -24,14 +24,14 @@ public class GameHandler {
         try {
             String authToken=ctx.header("authorization");
             List<GameData> gameList=gameService.listGames(authToken);
-            ctx.status(200).json(Map.of("games",gameList));
+            ctx.status(200).result(gson.toJson(Map.of("games",gameList)));
         }catch (DataAccessException e){
             String msg=e.getMessage();
 
             if(msg.contains("unauthorized")) {
-                ctx.status(401).json(new Error("unauthorized"));
+                ctx.status(401).result(gson.toJson(new Error("unauthorized")));
             }else {
-                ctx.status(500).json(new Error(msg));
+                ctx.status(500).result(gson.toJson(new Error(msg)));
             }
 
         }
@@ -44,16 +44,16 @@ public class GameHandler {
 
             int gameID = gameService.createGame(game.gameName(),authToken);
 
-            ctx.status(200).json(Map.of("gameIDs",gameID));
+            ctx.status(200).result(gson.toJson(Map.of("gameID",gameID)));
         }catch (DataAccessException e){
             String msg=e.getMessage();
 
             if (msg.contains("Bad Request")) {
-                ctx.status(400).json(new Error("Bad Request"));
+                ctx.status(400).result(gson.toJson(new Error("Bad Request")));
             } else if(msg.contains("unauthorized")) {
-                ctx.status(401).json(new Error("unauthorized"));
+                ctx.status(401).result(gson.toJson(new Error("unauthorized")));
             }else {
-                ctx.status(500).json(new Error(msg));
+                ctx.status(500).result(gson.toJson(new Error(msg)));
             }
 
         }
@@ -64,7 +64,7 @@ public class GameHandler {
             String authToken=ctx.header("authorization");
             JoinData joinData=gson.fromJson(ctx.body(),JoinData.class);
 
-            gameService.joinGame(authToken, joinData.gameID(), joinData.teamColor());
+            gameService.joinGame(authToken, joinData.gameID(), joinData.playerColor());
 
             ctx.status(200).result("{}");
 
@@ -72,13 +72,13 @@ public class GameHandler {
             String msg=e.getMessage();
 
             if (msg.contains("Bad Request")) {
-                ctx.status(400).json(new Error("Bad Request"));
+                ctx.status(400).result(gson.toJson(new Error("Bad Request")));
             } else if(msg.contains("unauthorized")) {
-                ctx.status(401).json(new Error("unauthorized"));
-            } else if(msg.contains("already taken")) {
-                ctx.status(4013).json(new Error("already taken"));
+                ctx.status(401).result(gson.toJson(new Error("unauthorized")));
+            } else if(msg.contains("Team Taken")) {
+                ctx.status(403).result(gson.toJson(new Error("already taken")));
             }else {
-                ctx.status(500).json(new Error(msg));
+                ctx.status(500).result(gson.toJson(new Error(msg)));
             }
         }
     }
