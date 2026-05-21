@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 public class GameHandler {
-    private GameService gameService;
-    private Gson gson = new Gson();
+    private final GameService gameService;
+    private final Gson gson = new Gson();
 
     public GameHandler(GameService gameService){
         this.gameService=gameService;
@@ -26,14 +26,7 @@ public class GameHandler {
             List<GameData> gameList=gameService.listGames(authToken);
             ctx.status(200).result(gson.toJson(Map.of("games",gameList)));
         }catch (DataAccessException e){
-            String msg=e.getMessage();
-
-            if(msg.contains("unauthorized")) {
-                ctx.status(401).result(gson.toJson(new ErrorResponse("Error: unauthorized")));
-            }else {
-                ctx.status(500).result(gson.toJson(new ErrorResponse("Error: " + msg)));
-            }
-
+            checkAllErrors(ctx,e.getMessage());
         }
     }
 
@@ -46,15 +39,7 @@ public class GameHandler {
 
             ctx.status(200).result(gson.toJson(Map.of("gameID",gameID)));
         }catch (DataAccessException e){
-            String msg=e.getMessage();
-
-            if (msg.contains("Bad Request")) {
-                ctx.status(400).result(gson.toJson(new ErrorResponse("Error: bad request")));
-            } else if(msg.contains("unauthorized")) {
-                ctx.status(401).result(gson.toJson(new ErrorResponse("Error: unauthorized")));
-            }else {
-                ctx.status(500).result(gson.toJson(new ErrorResponse("Error: " + msg)));
-            }
+            checkAllErrors(ctx,e.getMessage());
 
         }
     }
@@ -69,17 +54,21 @@ public class GameHandler {
             ctx.status(200).result("{}");
 
         }catch (DataAccessException e) {
-            String msg=e.getMessage();
-
-            if (msg.contains("Bad Request")) {
-                ctx.status(400).result(gson.toJson(new ErrorResponse("Error: bad request")));
-            } else if(msg.contains("unauthorized")) {
-                ctx.status(401).result(gson.toJson(new ErrorResponse("Error: unauthorized")));
-            } else if(msg.contains("Team Taken")) {
-                ctx.status(403).result(gson.toJson(new ErrorResponse("Error: already taken")));
-            }else {
-                ctx.status(500).result(gson.toJson(new ErrorResponse("Error: " + msg)));
-            }
+            checkAllErrors(ctx,e.getMessage());
         }
+    }
+    private void checkAllErrors(Context ctx,String msg){
+        if(msg.contains("Bad Request")){
+            sendError(ctx, 400, "Error: bad request");
+        }else if (msg.contains("Team Taken")) {
+            sendError(ctx, 403, "Error: already taken");
+        }else if(msg.contains("unauthorized")){
+            sendError(ctx, 401, "Error: unauthorized");
+        }else{
+            sendError(ctx, 500, "Error: " + msg);
+        }
+    }
+    private void sendError(Context ctx, int status, String message) {
+        ctx.status(status).result(gson.toJson(new ErrorResponse(message)));
     }
 }

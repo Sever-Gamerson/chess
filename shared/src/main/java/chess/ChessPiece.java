@@ -75,10 +75,7 @@ public class ChessPiece {
             ChessPosition walk = new ChessPosition(currentRow+direction,currentCol);
             if(board.getPiece(walk)==null){//no piece in front
                 if(walk.row==8||walk.row==1){
-                    moves.add(new ChessMove(myPosition,walk,ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(myPosition,walk,ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(myPosition,walk,ChessPiece.PieceType.KNIGHT));
-                    moves.add(new ChessMove(myPosition,walk,ChessPiece.PieceType.QUEEN));
+                    addPromotionMoves(myPosition, walk, moves);
                 }else{
                     moves.add(new ChessMove(myPosition,walk,null));
                 }
@@ -98,10 +95,7 @@ public class ChessPiece {
             if(takeRight.col>=1 && takeRight.col<=8){//make sure its in bounds
                 if(board.getPiece(takeRight)!=null&& board.getPiece(takeRight).getTeamColor()!=pieceColor){//not empty and not a friend
                     if(takeRight.row==8||takeRight.row==1){
-                        moves.add(new ChessMove(myPosition,takeRight,ChessPiece.PieceType.ROOK));
-                        moves.add(new ChessMove(myPosition,takeRight,ChessPiece.PieceType.BISHOP));
-                        moves.add(new ChessMove(myPosition,takeRight,ChessPiece.PieceType.KNIGHT));
-                        moves.add(new ChessMove(myPosition,takeRight,ChessPiece.PieceType.QUEEN));
+                        addPromotionMoves(myPosition, takeRight, moves);
                     }else{
                         moves.add(new ChessMove(myPosition,takeRight,null));
                     }
@@ -112,10 +106,7 @@ public class ChessPiece {
             if(takeLeft.col>=1 && takeLeft.col<=8){//make sure its in bounds
                 if(board.getPiece(takeLeft)!=null&& board.getPiece(takeLeft).getTeamColor()!=pieceColor){//not empty and not a friend
                     if(takeLeft.row==8||takeLeft.row==1){
-                        moves.add(new ChessMove(myPosition,takeLeft,ChessPiece.PieceType.ROOK));
-                        moves.add(new ChessMove(myPosition,takeLeft,ChessPiece.PieceType.BISHOP));
-                        moves.add(new ChessMove(myPosition,takeLeft,ChessPiece.PieceType.KNIGHT));
-                        moves.add(new ChessMove(myPosition,takeLeft,ChessPiece.PieceType.QUEEN));
+                        addPromotionMoves(myPosition, takeLeft, moves);
                     }else{
                         moves.add(new ChessMove(myPosition,takeLeft,null));
                     }
@@ -126,7 +117,7 @@ public class ChessPiece {
             int[][] direction={{2,1},{1,2},{-1,2},{-2,1},{-2,-1},{-1,-2},{1,-2},{2,-1}};
             for (int[] ints : direction) {
                 ChessPosition newPos = new ChessPosition(currentRow + ints[0], currentCol + ints[1]);
-                if (PositionGood(board, newPos, myPosition)) {
+                if (positionGood(board, newPos, myPosition)) {
                     moves.add(new ChessMove(myPosition, newPos, null));
                 }
             }
@@ -134,24 +125,24 @@ public class ChessPiece {
         }else if(currentPiece.getPieceType()==PieceType.BISHOP){
             int[][] direction={{1,1},{-1,1},{-1,-1},{1,-1}};
             for (int[] ints : direction) {
-                SlidingPiece(board, myPosition, ints[0], ints[1], moves);
+                slidingPiece(board, myPosition, ints[0], ints[1], moves);
 
             }
         }else if(currentPiece.getPieceType()==PieceType.ROOK){
             int[][] direction={{1,0},{0,1},{-1,0},{0,-1}};
             for (int[] ints : direction) {
-                SlidingPiece(board, myPosition, ints[0], ints[1], moves);
+                slidingPiece(board, myPosition, ints[0], ints[1], moves);
             }
         }else if(currentPiece.getPieceType()==PieceType.QUEEN){
             int[][] direction={{1,0},{0,1},{-1,0},{0,-1},{1,1},{-1,1},{-1,-1},{1,-1}};
             for (int[] ints : direction) {
-                SlidingPiece(board, myPosition, ints[0], ints[1], moves);
+                slidingPiece(board, myPosition, ints[0], ints[1], moves);
             }
         }else if(currentPiece.getPieceType()==PieceType.KING){
             int[][] direction={{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1}};
             for (int[] ints : direction) {
                 ChessPosition newPos = new ChessPosition(currentRow + ints[0], currentCol + ints[1]);
-                if (PositionGood(board, newPos, myPosition)) {
+                if (positionGood(board, newPos, myPosition)) {
                     moves.add(new ChessMove(myPosition, newPos, null));
                 }
             }
@@ -161,17 +152,17 @@ public class ChessPiece {
         return moves;
 
     }
-    private boolean PositionGood(ChessBoard board, ChessPosition pos,ChessPosition myPosition){
+    private boolean positionGood(ChessBoard board, ChessPosition pos,ChessPosition myPosition){
         if(pos.row>0&&pos.row<9&&pos.col>0&&pos.col<9){
             return board.getPiece(pos) == null || board.getPiece(pos).pieceColor != board.getPiece(myPosition).pieceColor;
         }
         return false;
     }
-    private void SlidingPiece(ChessBoard board,ChessPosition myPosition,int dRow,int dCol,Collection<ChessMove> moves){
+    private void slidingPiece(ChessBoard board,ChessPosition myPosition,int dRow,int dCol,Collection<ChessMove> moves){
 
         for(int i=1; i<8;i++){
             ChessPosition newPos=new ChessPosition(myPosition.row+dRow*i,myPosition.col+dCol*i);
-            if(PositionGood(board,newPos,myPosition)){
+            if(positionGood(board,newPos,myPosition)){
                 moves.add(new ChessMove(myPosition,newPos,null));
                 if(board.getPiece(newPos)!=null){
                     break;
@@ -182,6 +173,13 @@ public class ChessPiece {
                 break;
             }
         }
+    }
+
+    private void addPromotionMoves(ChessPosition from, ChessPosition to, java.util.ArrayList<ChessMove> moves) {
+        moves.add(new ChessMove(from, to, PieceType.ROOK));
+        moves.add(new ChessMove(from, to, PieceType.BISHOP));
+        moves.add(new ChessMove(from, to, PieceType.KNIGHT));
+        moves.add(new ChessMove(from, to, PieceType.QUEEN));
     }
 
     @Override

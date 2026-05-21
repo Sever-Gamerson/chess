@@ -7,8 +7,8 @@ import service.ClearService;
 
 public class ClearHandler {
 
-    private Gson gson=new Gson();
-    private ClearService clearService;
+    private final Gson gson=new Gson();
+    private final ClearService clearService;
 
     public ClearHandler(ClearService clearService){
         this.clearService=clearService;
