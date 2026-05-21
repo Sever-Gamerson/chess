@@ -9,7 +9,7 @@ import java.util.UUID;
 
 
 public class UserService {
-    private DataAccess dataAccess;
+    private final DataAccess dataAccess;
 
     public UserService(DataAccess dataAccess){
         this.dataAccess =dataAccess;
@@ -53,7 +53,7 @@ public class UserService {
 
     public void logout(String authToken) throws DataAccessException{
         if(dataAccess.getAuth(authToken)==null){
-            throw new DataAccessException("unauthorized");//user not loged in
+            throw new DataAccessException("unauthorized");//user not logged in
         }
         dataAccess.deleteAuth(authToken);
     }

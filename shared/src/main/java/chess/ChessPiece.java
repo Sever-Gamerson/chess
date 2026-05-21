@@ -92,26 +92,10 @@ public class ChessPiece {
             }
             //take right
             ChessPosition takeRight = new ChessPosition(currentRow+direction,currentCol+1);
-            if(takeRight.col>=1 && takeRight.col<=8){//make sure its in bounds
-                if(board.getPiece(takeRight)!=null&& board.getPiece(takeRight).getTeamColor()!=pieceColor){//not empty and not a friend
-                    if(takeRight.row==8||takeRight.row==1){
-                        addPromotionMoves(myPosition, takeRight, moves);
-                    }else{
-                        moves.add(new ChessMove(myPosition,takeRight,null));
-                    }
-                }
-            }
+            tryPawnCapture(board, myPosition, takeRight, moves);
             //take left
             ChessPosition takeLeft = new ChessPosition(currentRow+direction,currentCol-1);
-            if(takeLeft.col>=1 && takeLeft.col<=8){//make sure its in bounds
-                if(board.getPiece(takeLeft)!=null&& board.getPiece(takeLeft).getTeamColor()!=pieceColor){//not empty and not a friend
-                    if(takeLeft.row==8||takeLeft.row==1){
-                        addPromotionMoves(myPosition, takeLeft, moves);
-                    }else{
-                        moves.add(new ChessMove(myPosition,takeLeft,null));
-                    }
-                }
-            }
+            tryPawnCapture(board, myPosition, takeLeft, moves);
 
         }else if(currentPiece.getPieceType()==PieceType.KNIGHT){
             int[][] direction={{2,1},{1,2},{-1,2},{-2,1},{-2,-1},{-1,-2},{1,-2},{2,-1}};
@@ -152,6 +136,21 @@ public class ChessPiece {
         return moves;
 
     }
+    private void tryPawnCapture(ChessBoard board, ChessPosition myPosition,
+                                ChessPosition target, java.util.ArrayList<ChessMove> moves) {
+        if (target.col < 1 || target.col > 8) {
+            return;
+        }
+        ChessPiece piece = board.getPiece(target);
+        if (piece != null && piece.getTeamColor() != pieceColor) {
+            if (target.row == 8 || target.row == 1) {
+                addPromotionMoves(myPosition, target, moves);
+            } else {
+                moves.add(new ChessMove(myPosition, target, null));
+            }
+        }
+    }
+
     private boolean positionGood(ChessBoard board, ChessPosition pos,ChessPosition myPosition){
         if(pos.row>0&&pos.row<9&&pos.col>0&&pos.col<9){
             return board.getPiece(pos) == null || board.getPiece(pos).pieceColor != board.getPiece(myPosition).pieceColor;
