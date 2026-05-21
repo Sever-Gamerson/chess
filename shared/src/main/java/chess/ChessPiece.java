@@ -99,37 +99,20 @@ public class ChessPiece {
 
         }else if(currentPiece.getPieceType()==PieceType.KNIGHT){
             int[][] direction={{2,1},{1,2},{-1,2},{-2,1},{-2,-1},{-1,-2},{1,-2},{2,-1}};
-            for (int[] ints : direction) {
-                ChessPosition newPos = new ChessPosition(currentRow + ints[0], currentCol + ints[1]);
-                if (positionGood(board, newPos, myPosition)) {
-                    moves.add(new ChessMove(myPosition, newPos, null));
-                }
-            }
+            addJumpMoves(board, myPosition, direction, moves);
 
-        }else if(currentPiece.getPieceType()==PieceType.BISHOP){
-            int[][] direction={{1,1},{-1,1},{-1,-1},{1,-1}};
-            for (int[] ints : direction) {
-                slidingPiece(board, myPosition, ints[0], ints[1], moves);
+        } else if (currentPiece.getPieceType() == PieceType.BISHOP) {
+            slidingPiece(board, myPosition, new int[][]{{1,1},{-1,1},{-1,-1},{1,-1}}, moves);
 
-            }
-        }else if(currentPiece.getPieceType()==PieceType.ROOK){
-            int[][] direction={{1,0},{0,1},{-1,0},{0,-1}};
-            for (int[] ints : direction) {
-                slidingPiece(board, myPosition, ints[0], ints[1], moves);
-            }
-        }else if(currentPiece.getPieceType()==PieceType.QUEEN){
-            int[][] direction={{1,0},{0,1},{-1,0},{0,-1},{1,1},{-1,1},{-1,-1},{1,-1}};
-            for (int[] ints : direction) {
-                slidingPiece(board, myPosition, ints[0], ints[1], moves);
-            }
+        } else if (currentPiece.getPieceType() == PieceType.ROOK) {
+            slidingPiece(board, myPosition, new int[][]{{1,0},{0,1},{-1,0},{0,-1}}, moves);
+
+        } else if (currentPiece.getPieceType() == PieceType.QUEEN) {
+            slidingPiece(board, myPosition, new int[][]{{1,0},{0,1},{-1,0},{0,-1},{1,1},{-1,1},{-1,-1},{1,-1}}, moves);
+
         }else if(currentPiece.getPieceType()==PieceType.KING){
             int[][] direction={{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1}};
-            for (int[] ints : direction) {
-                ChessPosition newPos = new ChessPosition(currentRow + ints[0], currentCol + ints[1]);
-                if (positionGood(board, newPos, myPosition)) {
-                    moves.add(new ChessMove(myPosition, newPos, null));
-                }
-            }
+            addJumpMoves(board, myPosition, direction, moves);
         }
 
         //we about to cook
@@ -150,26 +133,37 @@ public class ChessPiece {
             }
         }
     }
-
+    private void addJumpMoves(ChessBoard board, ChessPosition myPosition,
+                              int[][] directions, java.util.ArrayList<ChessMove> moves) {
+        int currentRow = myPosition.row;
+        int currentCol = myPosition.col;
+        for (int[] dir : directions) {
+            ChessPosition newPos = new ChessPosition(currentRow + dir[0], currentCol + dir[1]);
+            if (positionGood(board, newPos, myPosition)) {
+                moves.add(new ChessMove(myPosition, newPos, null));
+            }
+        }
+    }
     private boolean positionGood(ChessBoard board, ChessPosition pos,ChessPosition myPosition){
         if(pos.row>0&&pos.row<9&&pos.col>0&&pos.col<9){
             return board.getPiece(pos) == null || board.getPiece(pos).pieceColor != board.getPiece(myPosition).pieceColor;
         }
         return false;
     }
-    private void slidingPiece(ChessBoard board,ChessPosition myPosition,int dRow,int dCol,Collection<ChessMove> moves){
-
-        for(int i=1; i<8;i++){
-            ChessPosition newPos=new ChessPosition(myPosition.row+dRow*i,myPosition.col+dCol*i);
-            if(positionGood(board,newPos,myPosition)){
-                moves.add(new ChessMove(myPosition,newPos,null));
-                if(board.getPiece(newPos)!=null){
+    private void slidingPiece(ChessBoard board, ChessPosition myPosition,
+                              int[][] directions, Collection<ChessMove> moves) {
+        for (int[] dir : directions) {
+            for (int i = 1; i < 8; i++) {
+                ChessPosition newPos = new ChessPosition(myPosition.row + dir[0] * i,
+                        myPosition.col + dir[1] * i);
+                if (positionGood(board, newPos, myPosition)) {
+                    moves.add(new ChessMove(myPosition, newPos, null));
+                    if (board.getPiece(newPos) != null) {
+                        break;
+                    }
+                } else {
                     break;
                 }
-            }
-            else
-            {
-                break;
             }
         }
     }
