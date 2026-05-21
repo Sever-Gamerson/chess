@@ -150,26 +150,30 @@ public class ChessGame {
 
 
     }
-    public boolean beingAttacked(ChessPosition pos, TeamColor myTeamColor,ChessBoard gameBoard){
-        for(int row=1;row<=8;row++) {
-            for (int col=1; col<=8; col++) {
+    public boolean beingAttacked(ChessPosition pos, TeamColor myTeamColor, ChessBoard gameBoard) {
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
                 ChessPosition checkPosition = new ChessPosition(row, col);
-                ChessPiece currentPiece=gameBoard.getPiece(checkPosition);
-                if (currentPiece!= null&&currentPiece.getTeamColor()!=myTeamColor) {
-                    Collection<ChessMove> moves= currentPiece.pieceMoves(gameBoard,checkPosition);
-                    for(ChessMove move:moves){
-                        if(move.getEndPosition().equals(pos)){
-                            return true;
-                        }
-                    }
+                if (pieceAttacksPosition(gameBoard, checkPosition, pos, myTeamColor)) {
+                    return true;
                 }
             }
         }
         return false;
-
-
     }
-
+    private boolean pieceAttacksPosition(ChessBoard gameBoard, ChessPosition from,
+                                         ChessPosition target, TeamColor myTeamColor) {
+        ChessPiece piece = gameBoard.getPiece(from);
+        if (piece == null || piece.getTeamColor() == myTeamColor) {
+            return false;
+        }
+        for (ChessMove move : piece.pieceMoves(gameBoard, from)) {
+            if (move.getEndPosition().equals(target)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public ChessPosition findKingPos(TeamColor teamColor){
         ChessBoard gameBoard = getBoard();
         ChessPosition kingPos;
