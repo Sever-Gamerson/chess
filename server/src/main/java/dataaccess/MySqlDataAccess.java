@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.Gson;
 
+import org.mindrot.jbcrypt.BCrypt;
+
+
 
 public class MySqlDataAccess implements DataAccess {
     private static final Gson GSON = new Gson();
@@ -58,14 +61,20 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public void createUser(UserData user) throws DataAccessException {
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
         var sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
             ps.setString(1, user.username());
-            ps.setString(2, user.password());
+            ps.setString(2, hashedPassword);
+
             ps.setString(3, user.email());
             ps.executeUpdate();
+
         } catch (SQLException e) {
+            if (e.getErrorCode() == 1062) {
+                throw new DataAccessException("User already exists");
+            }
             throw new DataAccessException("Error creating user: " + e.getMessage());
         }
     }
@@ -79,8 +88,9 @@ public class MySqlDataAccess implements DataAccess {
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new UserData(
+
                             rs.getString("username"),
-                            rs.getString("password"),
+                            rs.getString("password"), // this is the hash
                             rs.getString("email")
                     );
                 }
