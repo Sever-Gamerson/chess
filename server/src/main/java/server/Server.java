@@ -1,5 +1,7 @@
 package server;
 
+import dataaccess.DataAccessException;
+import dataaccess.MySqlDataAccess;
 import io.javalin.*;
 
 import dataaccess.DataAccess;
@@ -15,7 +17,12 @@ public class Server {
     private final Javalin javalin;
 
     public Server() {
-        DataAccess dataAccess = new MemoryDataAccess();
+        DataAccess dataAccess;
+        try {
+            dataAccess = new MySqlDataAccess();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
 
         ClearHandler clearHandler= new ClearHandler(new ClearService(dataAccess));
         UserHandler userHandler= new UserHandler(new UserService(dataAccess));
