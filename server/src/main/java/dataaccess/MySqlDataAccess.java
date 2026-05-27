@@ -15,15 +15,20 @@ import org.mindrot.jbcrypt.BCrypt;
 
 
 public class MySqlDataAccess implements DataAccess {
+    // Gson converts Java objects to JSON strings and back
     private static final Gson GSON = new Gson();
+    //set up the database immediately
     public MySqlDataAccess() throws DataAccessException {
         configureDatabase();
     }
 
+
+    // Makes sure the database and the 3 tables exist before we use it
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
             var statements = new String[]{
+                    // users table stores username, password, and email
                     """
                 CREATE TABLE IF NOT EXISTS users (
                     username VARCHAR(256) PRIMARY KEY,
@@ -47,6 +52,7 @@ public class MySqlDataAccess implements DataAccess {
                 )
                 """
             };
+            // Run each table statement
             for (var statement : statements) {
                 try (var ps = conn.prepareStatement(statement)) {
                     ps.executeUpdate();
@@ -65,6 +71,7 @@ public class MySqlDataAccess implements DataAccess {
         var sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
+            // Fill in the ? placeholders in order
             ps.setString(1, user.username());
             ps.setString(2, hashedPassword);
 
@@ -73,12 +80,13 @@ public class MySqlDataAccess implements DataAccess {
 
         } catch (SQLException e) {
             if (e.getErrorCode() == 1062) {
+                // Error code 1062 means duplicate(rmb; it was found by printing it)
                 throw new DataAccessException("User already exists");
             }
             throw new DataAccessException("Error creating user: " + e.getMessage());
         }
     }
-
+    //returns null if not found
     @Override
     public UserData getUser(String username) throws DataAccessException {
         var sql = "SELECT username, password, email FROM users WHERE username = ?";
@@ -107,10 +115,10 @@ public class MySqlDataAccess implements DataAccess {
         var sql = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, null);
-            ps.setString(2, null);
+            ps.setString(1, null); // no white player yet
+            ps.setString(2, null);// no black player yet
             ps.setString(3, gameName);
-            ps.setString(4, GSON.toJson(new ChessGame()));          // empty game state placeholder
+            ps.setString(4, GSON.toJson(new ChessGame()));  // empty game state
             ps.executeUpdate();
             try (var keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
@@ -236,6 +244,7 @@ public class MySqlDataAccess implements DataAccess {
     public void clear() throws DataAccessException {
         var sql = "TRUNCATE TABLE ";
         try (var conn = DatabaseManager.getConnection()) {
+            // Order matters
             for (var table : new String[]{"auth", "games", "users"}) {
                 try (var ps = conn.prepareStatement(sql + table)) {
                     ps.executeUpdate();
