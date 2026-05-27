@@ -67,20 +67,20 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public void createUser(UserData user) throws DataAccessException {
+        // validate before even touching the database
+        if (user == null || user.username() == null || user.password() == null || user.email() == null) {
+            throw new DataAccessException("Bad Request");
+        }
         String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
         var sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
-            // Fill in the ? placeholders in order
             ps.setString(1, user.username());
             ps.setString(2, hashedPassword);
-
             ps.setString(3, user.email());
             ps.executeUpdate();
-
         } catch (SQLException e) {
             if (e.getErrorCode() == 1062) {
-                // Error code 1062 means duplicate(rmb; it was found by printing it)
                 throw new DataAccessException("User already exists");
             }
             throw new DataAccessException("Error creating user: " + e.getMessage());
@@ -89,16 +89,21 @@ public class MySqlDataAccess implements DataAccess {
     //returns null if not found
     @Override
     public UserData getUser(String username) throws DataAccessException {
+        // cant look up a null username
+        if (username == null) {
+            throw new DataAccessException("Bad Request");
+        }
         var sql = "SELECT username, password, email FROM users WHERE username = ?";
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, username);
+
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new UserData(
-
                             rs.getString("username"),
-                            rs.getString("password"), // this is the hash
+                            rs.getString("password"),
                             rs.getString("email")
                     );
                 }
@@ -108,7 +113,6 @@ public class MySqlDataAccess implements DataAccess {
         }
         return null;
     }
-
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
@@ -233,6 +237,7 @@ public class MySqlDataAccess implements DataAccess {
              var ps = conn.prepareStatement(sql)) {
             ps.setString(1, authToken);
             ps.executeUpdate();
+
         } catch (SQLException e) {
             throw new DataAccessException("Error deleting auth: " + e.getMessage());
         }
