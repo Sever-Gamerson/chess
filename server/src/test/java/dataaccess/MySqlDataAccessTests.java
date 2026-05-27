@@ -174,5 +174,114 @@ public class MySqlDataAccessTests {
         // deleting a token that doesnt exist should not crash
         assertDoesNotThrow(() -> dataAccess.deleteAuth("doesnotexist"));
     }
+    // GAME
+    @Test
+    @Order(12)
+    @DisplayName("Create Game - success")
+    void createGamePositive() throws DataAccessException {
+        // create a game and verify it got a valid ID back
+        int gameID = dataAccess.createGame("testgame");
+        assertTrue(gameID > 0);
 
+        GameData game = dataAccess.getGame(gameID);
+        assertNotNull(game);
+        assertEquals("testgame", game.gameName());
+    }
+
+    @Test
+    @Order(13)
+    @DisplayName("Create Game - null name fails")
+    void createGameNegative() throws DataAccessException {
+        // game name cannot be null
+        assertThrows(DataAccessException.class, () ->
+                dataAccess.createGame(null)
+        );
+    }
+
+    @Test
+    @Order(14)
+    @DisplayName("Get Game - success")
+    void getGamePositive() throws DataAccessException {
+        // game we created should come back with correct data
+        int gameID = dataAccess.createGame("mygame");
+        GameData game = dataAccess.getGame(gameID);
+
+        assertNotNull(game);
+        assertEquals(gameID, game.gameID());
+        assertEquals("mygame", game.gameName());
+        assertNull(game.whiteUsername());  // no players yet
+        assertNull(game.blackUsername());
+        assertNotNull(game.game());        // chess game object should exist
+    }
+
+    @Test
+    @Order(15)
+    @DisplayName("Get Game - nonexistent game returns null")
+    void getGameNegative() throws DataAccessException {
+        // looking up a game that doesnt exist should return null
+        GameData game = dataAccess.getGame(99999);
+        assertNull(game);
+    }
+
+    @Test
+    @Order(16)
+    @DisplayName("List Games - success")
+    void listGamesPositive() throws DataAccessException {
+        // all created games should show up in the list
+        dataAccess.createGame("game1");
+        dataAccess.createGame("game2");
+        dataAccess.createGame("game3");
+
+        var games = dataAccess.listGames();
+        assertEquals(3, games.size());
+    }
+
+    @Test
+    @Order(17)
+    @DisplayName("List Games - empty list when no games")
+    void listGamesNegative() throws DataAccessException {
+        // empty database should return empty list not null
+        var games = dataAccess.listGames();
+        assertNotNull(games);
+        assertTrue(games.isEmpty());
+    }
+
+    @Test
+    @Order(18)
+    @DisplayName("Update Game - success")
+    void updateGamePositive() throws DataAccessException {
+        // create a game then add a white player to it
+        int gameID = dataAccess.createGame("testgame");
+        GameData original = dataAccess.getGame(gameID);
+
+        // add white player
+        GameData updated = new GameData(gameID, "whiteplayer", null, "testgame", original.game());
+        dataAccess.updateGame(updated);
+
+        GameData result = dataAccess.getGame(gameID);
+        assertEquals("whiteplayer", result.whiteUsername());
+    }
+
+    @Test
+    @Order(19)
+    @DisplayName("Update Game - chess game state persists")
+    void updateGameNegative() throws DataAccessException {
+        // make sure the actual chess game state saves correctly
+        int gameID = dataAccess.createGame("testgame");
+        GameData original = dataAccess.getGame(gameID);
+
+        // update with a new game state
+        ChessGame newGameState = new ChessGame();
+        GameData updated = new GameData(gameID, "white", "black", "testgame", newGameState);
+        dataAccess.updateGame(updated);
+
+        GameData result = dataAccess.getGame(gameID);
+        // both players should be saved
+        assertEquals("white", result.whiteUsername());
+        assertEquals("black", result.blackUsername());
+        // game object should not be null after update
+        assertNotNull(result.game());
+    }
 }
+
+
