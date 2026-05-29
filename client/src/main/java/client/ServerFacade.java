@@ -23,6 +23,39 @@ public class ServerFacade {
         return makeRequest("POST", "/user", body, null, AuthData.class);
     }
 
+    public AuthData login(String username, String password) throws Exception{
+        var body=Map.of("username",username,"password",password);
+        return makeRequest("POST","/session",body,null,AuthData.class);
+    }
+    public void logout(String authToken) throws Exception {
+
+        makeRequest("DELETE", "/session", null, authToken, Void.class);
+    }
+    public List<GameData> listGames(String authToken) throws Exception {
+
+        var result = makeRequest("GET", "/game", null, authToken, Map.class);
+        var gamesJson = gson.toJson(result.get("games"));
+
+        GameData[] games = gson.fromJson(gamesJson, GameData[].class);
+        return List.of(games);
+    }
+
+    public void joinGame(String authToken, String playerColor, int gameID) throws Exception {
+        var body = Map.of("playerColor", playerColor, "gameID", gameID);
+        makeRequest("PUT", "/game", body, authToken, Void.class);
+    }
+
+    public void clear() throws Exception {
+        makeRequest("DELETE", "/db", null, null, Void.class);
+    }
+
+    public int createGame(String authToken, String gameName) throws Exception {
+        var body = Map.of("gameName", gameName);
+        var result = makeRequest("POST", "/game", body, authToken, Map.class);
+
+        // gameID comes back as a Double from Gson when deserializing into a Map
+        return ((Double) result.get("gameID")).intValue();
+    }
 
     private <T> T makeRequest(String method, String path, Object body,
                               String authToken, Class<T> responseClass) throws Exception {//helper to take care of all the future functions
