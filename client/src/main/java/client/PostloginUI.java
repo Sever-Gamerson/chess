@@ -149,9 +149,10 @@ public class PostloginUI {
             facade.joinGame(auth.authToken(), color, game.gameID());
 
             //render board
-
+            BoardRenderer.draw(color.equals("WHITE"));
             return "Joined game as " + color + ".";
         } catch (Exception e) {
+
             return "Failed to join game: " + e.getMessage();
         }
     }
@@ -177,7 +178,7 @@ public class PostloginUI {
             return "Invalid game number. Please list games first to see valid numbers.";
         }
 
-        // observers see white's perspective and render board
+        BoardRenderer.draw(true);// observers see white's perspective and render board
         return "Observing game " + gameNumber + ".";
     }
 }
