@@ -15,6 +15,8 @@ public class PreloginUI {
         return switch (input){
             case "help" -> help();
             case "login" -> login();
+            case "register"-> register();
+            case "quit"-> "Goodbye!";
             default -> "Unknown command. Type 'help' for options.";
         };
     }
@@ -42,7 +44,27 @@ public class PreloginUI {
             return "logged in!";
         }catch (Exception e){
             return "Login failed: "+e.getMessage();
+
         }
     }
 
+    private String register(){
+        System.out.print("Username: ");
+        String username=scanner.nextLine().trim();
+
+        System.out.print("Password: ");
+        String password = scanner.nextLine().trim();
+
+        System.out.print("Email: ");
+        String email = scanner.nextLine().trim();
+
+        try{
+            AuthData auth =facade.register(username,password,email);
+            //another function
+            return "registered!";
+
+        }catch(Exception e){
+            return "Registration failed: "+e.getMessage();
+        }
+    }
 }
