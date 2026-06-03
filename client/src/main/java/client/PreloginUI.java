@@ -39,9 +39,9 @@ public class PreloginUI {
 
         try{
             AuthData auth = facade.login(username,password);
+            new PostloginUI(facade,auth).run();
 
-            //login function might need one
-            return "logged in!";
+            return "logged Out!";
         }catch (Exception e){
             return "Login failed: "+e.getMessage();
 
@@ -60,8 +60,9 @@ public class PreloginUI {
 
         try{
             AuthData auth =facade.register(username,password,email);
-            //another function
-            return "registered!";
+
+            new PostloginUI(facade,auth).run();
+            return "Logged Out";
 
         }catch(Exception e){
             return "Registration failed: "+e.getMessage();
