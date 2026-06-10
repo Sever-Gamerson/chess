@@ -28,7 +28,22 @@ public class Server {
         UserHandler userHandler= new UserHandler(new UserService(dataAccess));
         GameHandler gameHandler= new GameHandler(new GameService(dataAccess));
 
+        //added and linked to wedsockethandler
+        GameSessionManager sessionManager = new GameSessionManager();
+        WebSocketHandler wsHandler = new WebSocketHandler(dataAccess, sessionManager);
+
+
+
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
+
+        javalin.ws("/ws", ws -> {
+            ws.onConnect(ctx -> wsHandler.onConnect(ctx.session));
+            ws.onClose(ctx -> wsHandler.onClose(ctx.session, ctx.status(), ctx.reason()));
+            ws.onError(ctx -> wsHandler.onError(ctx.session, ctx.error()));
+            ws.onMessage(ctx -> wsHandler.onMessage(ctx.session, ctx.message()));
+        });
+
+
 
         javalin.delete("/db",clearHandler::clear);
 

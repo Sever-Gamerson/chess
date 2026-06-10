@@ -14,6 +14,11 @@ public class ChessGame {
 
     private ChessBoard chessBoard;
 
+    private boolean gameOver = false;
+
+    public boolean isGameOver() { return gameOver; }
+    public void setGameOver(boolean gameOver) { this.gameOver = gameOver; }
+
 
     public ChessGame() {
         chessBoard= new ChessBoard();
