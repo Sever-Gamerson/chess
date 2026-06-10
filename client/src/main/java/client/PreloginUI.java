@@ -6,9 +6,11 @@ import java.util.Scanner;
 public class PreloginUI {
     private final ServerFacade facade;
     private final Scanner scanner=new Scanner(System.in);
+    private final int port;
 
-    public PreloginUI(ServerFacade facade){
+    public PreloginUI(ServerFacade facade,int port){
         this.facade=facade;
+        this.port = port;
     }
 
     public String eval(String input){
@@ -39,7 +41,7 @@ public class PreloginUI {
 
         try{
             AuthData auth = facade.login(username,password);
-            new PostloginUI(facade,auth).run();
+            new PostloginUI(facade, auth, port).run();
 
             return "logged Out!";
         }catch (Exception e){
@@ -61,7 +63,7 @@ public class PreloginUI {
         try{
             AuthData auth =facade.register(username,password,email);
 
-            new PostloginUI(facade,auth).run();
+            new PostloginUI(facade, auth, port).run();
             return "Logged Out";
 
         }catch(Exception e){

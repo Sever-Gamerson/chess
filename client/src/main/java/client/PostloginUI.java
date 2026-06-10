@@ -10,13 +10,14 @@ import java.util.Scanner;
 public class PostloginUI {
     private final ServerFacade facade;
     private final AuthData auth;
+    private final int port;
 
     private final Scanner scanner = new Scanner(System.in);
     private List<GameData> lastGameList = new ArrayList<>();
 
-    public PostloginUI(ServerFacade facade, AuthData auth) {
+    public PostloginUI(ServerFacade facade, AuthData auth, int port) {
         this.facade = facade;
-
+        this.port = port;
         this.auth = auth;
     }
 
@@ -128,7 +129,6 @@ public class PostloginUI {
         int gameNumber;
         try {
             gameNumber = Integer.parseInt(scanner.nextLine().trim());
-
         } catch (NumberFormatException e) {
             return "Invalid number. Please enter a valid game number.";
         }
@@ -137,20 +137,24 @@ public class PostloginUI {
             return "Invalid game number. Please list games first to see valid numbers.";
         }
 
+
         System.out.print("Color (WHITE/BLACK): ");
+
         String color = scanner.nextLine().trim().toUpperCase();
 
         if (!color.equals("WHITE") && !color.equals("BLACK")) {
             return "Invalid color. Please enter WHITE or BLACK.";
+
         }
 
         try {
+
             GameData game = lastGameList.get(gameNumber - 1);
             facade.joinGame(auth.authToken(), color, game.gameID());
 
-            //render board
-            BoardRenderer.draw(color.equals("WHITE"));
-            return "Joined game as " + color + ".";
+            new GameplayUI(facade, auth.authToken(), game.gameID(), color, port).run();
+            return "Welcome back!";
+
         } catch (Exception e) {
 
             return "Failed to join game: " + e.getMessage();
@@ -158,14 +162,13 @@ public class PostloginUI {
     }
 
     private String observeGame() {
-        //player isnt playing
-
         if (lastGameList.isEmpty()) {
             return "Please run 'list games' first.";
         }
 
         System.out.print("Game number: ");
         int gameNumber;
+
         try {
             gameNumber = Integer.parseInt(scanner.nextLine().trim());
 
@@ -178,7 +181,15 @@ public class PostloginUI {
             return "Invalid game number. Please list games first to see valid numbers.";
         }
 
-        BoardRenderer.draw(true);// observers see white's perspective and render board
-        return "Observing game " + gameNumber + ".";
+        try {
+            GameData game = lastGameList.get(gameNumber - 1);
+            // observers pass null for color
+            new GameplayUI(facade, auth.authToken(), game.gameID(), null, port).run();
+
+            return "Welcome back!";
+
+        } catch (Exception e) {
+            return "Failed to observe game: " + e.getMessage();
+        }
     }
 }

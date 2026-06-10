@@ -1,122 +1,104 @@
 package client;
 
+import chess.*;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 public class BoardRenderer {
 
-    // ANSI color codes
+    // border colors
+    private static final String BORDER_BG   = "\u001B[48;5;17m";
+    private static final String BORDER_TEXT = "\u001B[32m";
+
+    // square colors
+    private static final String LIGHT_SQUARE     = "\u001B[47m";
+    private static final String DARK_SQUARE      = "\u001B[100m";
+    private static final String LIGHT_HIGHLIGHT  = "\u001B[48;5;226m";  // yellow
+    private static final String DARK_HIGHLIGHT   = "\u001B[48;5;220m";  // darker yellow
+
+    // piece colors
+    private static final String WHITE_PIECE = "\u001B[97m";
+    private static final String BLACK_PIECE = "\u001B[34m";
+
     private static final String RESET = "\u001B[0m";
-    private static final String LIGHT_SQUARE = "\u001B[47m";   // white background
-    private static final String DARK_SQUARE = "\u001B[100m";
-    // dark gray background
-    private static final String WHITE_PIECE = "\u001B[97m";    // bright white text
-    private static final String BLACK_PIECE = "\u001B[34m";// blue text
 
-    private static final String BORDER_BG = "\u001B[48;5;17m";   // dark blue background
-    private static final String BORDER_TEXT = "\u001B[32m";     // dark green text
+    private static final char[] COLS = {'a','b','c','d','e','f','g','h'};
 
-    // pieces in order from row 8 to row 1 (black side to white side)
-    private static final String[] BLACK_BACK_ROW = {"r", "n", "b", "q", "k", "b", "n", "r"};
-    private static final String[] WHITE_BACK_ROW = {"R", "N", "B", "Q", "K", "B", "N", "R"};
-
-    // column labels
-    private static final char[] COLS = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
-
-    public static void draw(boolean whiteBottom) {
+    // draws the board — pass null for highlights if you don't want any
+    public static void draw(boolean whiteBottom, ChessGame game,
+                            Collection<ChessMove> highlights) {
         System.out.println();
 
-        // build the board as a 2D array of pieces
-        String[][] board = buildBoard();
+        // collect just the end positions so we can check them quickly
+        Set<ChessPosition> highlightedSquares = new HashSet<>();
+        if (highlights != null) {
+            for (ChessMove move : highlights) {
+
+                highlightedSquares.add(move.getEndPosition());
+            }
+
+        }
 
         if (whiteBottom) {
-            drawWhitePerspective(board);
+
+            drawWhitePerspective(game.getBoard(), highlightedSquares);
         } else {
-            drawBlackPerspective(board);
+            drawBlackPerspective(game.getBoard(), highlightedSquares);
         }
 
         System.out.println();
     }
 
 
-    private static String[][] buildBoard() {
-        String[][] board = new String[8][8];
-
-        // row 8 (index 0) — black back row
-        for (int col = 0; col < 8; col++) {
-            board[0][col] = BLACK_PIECE + BLACK_BACK_ROW[col];
-
-        }
-
-        // row 7 (index 1) — black pawns
-        for (int col = 0; col < 8; col++) {
-            board[1][col] = BLACK_PIECE + "p";
-        }
-
-        // rows 6-3 (index 2-5) — empty
-        for (int row = 2; row <= 5; row++) {
-
-            for (int col = 0; col < 8; col++) {
-                board[row][col] = " ";
-            }
-
-        }
-
-        // row 2 (index 6) — white pawns
-        for (int col = 0; col < 8; col++) {
-            board[6][col] = WHITE_PIECE + "P";
-        }
-
-        // row 1 (index 7) — white back row
-        for (int col = 0; col < 8; col++) {
-
-            board[7][col] = WHITE_PIECE + WHITE_BACK_ROW[col];
-        }
-
-        return board;
-    }
-
-    private static void drawWhitePerspective(String[][] board) {
-        // column headers a-h
+    private static void drawWhitePerspective(ChessBoard board, Set<ChessPosition> highlights) {
         printColHeaders(false);
 
-        // rows 8 down to 1
-        for (int row = 0; row < 8; row++) {
-            int rowLabel = 8 - row;
+        // row 8 at top down to row 1 at bottom
+        for (int row = 8; row >= 1; row--) {
+            printRowLabel(row);
 
-            System.out.print(BORDER_BG + BORDER_TEXT + " " + rowLabel + " " + RESET);
 
-            for (int col = 0; col < 8; col++) {
+            for (int col = 1; col <= 8; col++) {
 
-                boolean lightSquare = (row + col) % 2 == 0;
-                printSquare(board[row][col], lightSquare);
+                ChessPosition pos = new ChessPosition(row, col);
+                boolean light = (row + col) % 2 != 0;
+
+                boolean highlighted = highlights.contains(pos);
+                printSquare(board.getPiece(pos), light, highlighted);
 
             }
 
-            System.out.print(BORDER_BG + BORDER_TEXT + " " + rowLabel + " " + RESET);
+            printRowLabel(row);
             System.out.println();
         }
 
         printColHeaders(false);
     }
 
-    private static void drawBlackPerspective(String[][] board) {
-        // column headers h-a
+    private static void drawBlackPerspective(ChessBoard board, Set<ChessPosition> highlights) {
         printColHeaders(true);
 
-        // rows 1 up to 8
-        for (int row = 7; row >= 0; row--) {
-            int rowLabel = 8 - row;
-            System.out.print(BORDER_BG + BORDER_TEXT + " " + rowLabel + " " + RESET);
+        // row 1 at top up to row 8 at bottom
+        for (int row = 1; row <= 8; row++) {
+            printRowLabel(row);
 
-            for (int col = 7; col >= 0; col--) {
-                boolean lightSquare = (row + col) % 2 == 0;
-                printSquare(board[row][col], lightSquare);
+            for (int col = 8; col >= 1; col--) {
+                ChessPosition pos = new ChessPosition(row, col);
+                boolean light = (row + col) % 2 != 0;
+                boolean highlighted = highlights.contains(pos);
+                printSquare(board.getPiece(pos), light, highlighted);
             }
 
-            System.out.print(BORDER_BG + BORDER_TEXT + " " + rowLabel + " " + RESET);
+            printRowLabel(row);
             System.out.println();
+
         }
 
         printColHeaders(true);
     }
+
 
     private static void printColHeaders(boolean reversed) {
         System.out.print(BORDER_BG + BORDER_TEXT + "   " + RESET);
@@ -130,12 +112,48 @@ public class BoardRenderer {
             }
         }
         System.out.println(BORDER_BG + BORDER_TEXT + "   " + RESET);
+
     }
 
-    private static void printSquare(String piece, boolean lightSquare) {
-        String bg = lightSquare ? LIGHT_SQUARE : DARK_SQUARE;
+    private static void printRowLabel(int row) {
+        System.out.print(BORDER_BG + BORDER_TEXT + " " + row + " " + RESET);
 
-        String cleanPiece = piece.replace(RESET, "");
-        System.out.print(bg + " " + cleanPiece + " " + RESET);
+    }
+
+
+    private static void printSquare(ChessPiece piece, boolean light, boolean highlighted) {
+        String bg;
+        if (highlighted) {
+            bg = light ? LIGHT_HIGHLIGHT : DARK_HIGHLIGHT;
+        } else {
+            bg = light ? LIGHT_SQUARE : DARK_SQUARE;
+        }
+
+
+        String content;
+        if (piece == null) {
+            content = "  ";
+
+        } else {
+
+            String color = piece.getTeamColor() == ChessGame.TeamColor.WHITE
+                    ? WHITE_PIECE : BLACK_PIECE;
+            content = color + getPieceLetter(piece.getPieceType());
+        }
+
+
+        System.out.print(bg + " " + content + " " + RESET);
+    }
+
+    private static String getPieceLetter(ChessPiece.PieceType type) {
+        return switch (type) {
+
+            case KING   -> "K";
+            case QUEEN  -> "Q";
+            case ROOK   -> "R";
+            case BISHOP -> "B";
+            case KNIGHT -> "N";
+            case PAWN   -> "P";
+        };
     }
 }

@@ -6,7 +6,7 @@ public class Repl {
 
     public Repl(int port) {
         ServerFacade facade = new ServerFacade(port);
-        this.preloginUI = new PreloginUI(facade);
+        this.preloginUI = new PreloginUI(facade, port);
     }
 
     public void run() {
