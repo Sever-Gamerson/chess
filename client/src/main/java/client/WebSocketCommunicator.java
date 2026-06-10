@@ -32,9 +32,18 @@ public class WebSocketCommunicator {
 
         URI uri = new URI("ws://localhost:" + port + "/ws");
         ClientManager client = ClientManager.createClient();
-
-
         client.connectToServer(this, uri);
+
+        // wait until the session is actually open before returning
+        int attempts = 0;
+        while (session == null && attempts < 20) {
+            Thread.sleep(100);
+            attempts++;
+        }
+
+        if (session == null) {
+            throw new Exception("Failed to connect to server");
+        }
     }
 
 

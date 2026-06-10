@@ -111,7 +111,8 @@ public class BoardRenderer {
                 System.out.print(BORDER_BG + BORDER_TEXT + " " + col + " " + RESET);
             }
         }
-        System.out.println(BORDER_BG + BORDER_TEXT + "   " + RESET);
+        System.out.print(BORDER_BG + BORDER_TEXT + "   " + RESET);
+        System.out.println();
 
     }
 
@@ -129,18 +130,14 @@ public class BoardRenderer {
             bg = light ? LIGHT_SQUARE : DARK_SQUARE;
         }
 
-
         String content;
         if (piece == null) {
             content = "  ";
-
         } else {
-
             String color = piece.getTeamColor() == ChessGame.TeamColor.WHITE
                     ? WHITE_PIECE : BLACK_PIECE;
-            content = color + getPieceLetter(piece.getPieceType());
+            content = color + getPieceLetter(piece.getPieceType()) + bg;
         }
-
 
         System.out.print(bg + " " + content + " " + RESET);
     }

@@ -34,16 +34,21 @@ public class GameplayUI implements WebSocketCommunicator.MessageHandler {
         this.gameID = gameID;
         this.playerColor = playerColor;
 
-
-        // open the websocket connection
         ws = new WebSocketCommunicator(port, this);
 
-        // tell the server we are connecting
+        // give the connection a moment to fully establish
+        Thread.sleep(300);
+
         var connect = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
         ws.sendCommand(connect);
+
+        // wait a moment for the LOAD_GAME response to arrive and draw the board
+        Thread.sleep(500);
     }
 
     public void run() {
+        System.out.println("Type 'help' for in-game commands.");
+
         while (inGame) {
             System.out.print("[IN GAME] >>> ");
             String input = scanner.nextLine().trim().toLowerCase();
@@ -242,8 +247,8 @@ public class GameplayUI implements WebSocketCommunicator.MessageHandler {
     public void onLoadGame(LoadGameMessage message) {
         currentGame = message.getGame();
         System.out.println();
-        //BoardRenderer.draw(!"BLACK".equals(playerColor), currentGame.game(), null);
-        System.out.print("[IN GAME] >>> ");
+        BoardRenderer.draw(!"BLACK".equals(playerColor), currentGame.game(), null);
+        System.out.println();
     }
 
 
