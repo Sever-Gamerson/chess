@@ -21,4 +21,26 @@ public class WebSocketHandler {
         this.dataAccess = dataAccess;
         this.sessionManager = sessionManager;
     }
+    @OnWebSocketConnect
+    public void onConnect(Session session) {
+        System.out.println("WebSocket connected: " + session);
+    }
+
+
+    @OnWebSocketClose
+    public void onClose(Session session, int statusCode, String reason) {
+        System.out.println("WebSocket closed: " + reason);
+    }
+
+
+    @OnWebSocketError
+    public void onError(Session session, Throwable error) {
+        System.out.println("WebSocket error: " + error.getMessage());
+    }
+
+
+    @OnWebSocketMessage
+    public void onMessage(Session session, String message) {
+        //use a helper function
+    }
 }
