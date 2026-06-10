@@ -11,6 +11,7 @@ import websocket.messages.ServerMessage;
 import jakarta.websocket.*;
 import java.net.URI;
 
+
 @ClientEndpoint
 public class WebSocketCommunicator {
 
