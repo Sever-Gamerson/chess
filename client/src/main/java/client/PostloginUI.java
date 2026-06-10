@@ -46,8 +46,19 @@ public class PostloginUI {
             case "list games" -> listGames();
             case "play game" -> playGame();
             case "observe game" -> observeGame();
+            case "clear" -> clear();
             default -> "Unknown command. Type 'help' for options.";
         };
+    }
+//for debugging
+    private String clear() {
+        try {
+            facade.clear();
+            lastGameList.clear();
+            return "Cleared everything!";
+        } catch (Exception e) {
+            return "Failed to clear: " + e.getMessage();
+        }
     }
 
     private String help() {

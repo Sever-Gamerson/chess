@@ -21,7 +21,9 @@ public class GameplayUI implements WebSocketCommunicator.MessageHandler {
     private final int gameID;
     private final String playerColor;
     private WebSocketCommunicator ws;
-    private GameData currentGame;
+
+
+    private volatile GameData currentGame;
     private final Scanner scanner = new Scanner(System.in);
     private final Gson gson = new Gson();
     private boolean inGame = true;
@@ -90,7 +92,7 @@ public class GameplayUI implements WebSocketCommunicator.MessageHandler {
         if (currentGame == null) {
             return "Waiting for game data...";
         }
-        //BoardRenderer.draw(!"BLACK".equals(playerColor), currentGame.game(), null);
+        BoardRenderer.draw(!"BLACK".equals(playerColor), currentGame.game(), null);
         return null;
     }
 
@@ -209,7 +211,7 @@ public class GameplayUI implements WebSocketCommunicator.MessageHandler {
 
 
         Collection<ChessMove> moves = currentGame.game().validMoves(pos);
-        //BoardRenderer.draw(!"BLACK".equals(playerColor), currentGame.game(), moves);
+        BoardRenderer.draw(!"BLACK".equals(playerColor), currentGame.game(), moves);
         return null;
     }
 

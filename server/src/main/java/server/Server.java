@@ -37,7 +37,10 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         javalin.ws("/ws", ws -> {
-            ws.onConnect(wsHandler::onConnect);
+            ws.onConnect(ctx -> {
+                ctx.session.setIdleTimeout(java.time.Duration.ofHours(1));
+                wsHandler.onConnect(ctx);
+            });
             ws.onClose(wsHandler::onClose);
             ws.onError(wsHandler::onError);
             ws.onMessage(wsHandler::onMessage);

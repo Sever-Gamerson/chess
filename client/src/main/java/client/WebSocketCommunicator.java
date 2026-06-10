@@ -45,6 +45,8 @@ public class WebSocketCommunicator {
         if (session == null) {
             throw new Exception("Failed to connect to server");
         }
+        // prevent idle timeout from closing the connection
+        session.setMaxIdleTimeout(0);
     }
 
 
@@ -55,21 +57,26 @@ public class WebSocketCommunicator {
         this.session = session;
     }
 
-    // called automatically when a message arrives from the server
     @OnMessage
     public void onMessage(String json) {
+        try {
+            System.out.println("Received from server: " + json);
+            ServerMessage base = gson.fromJson(json, ServerMessage.class);
 
-        // first look at the type so we know which class to deserialize into
-        ServerMessage base = gson.fromJson(json, ServerMessage.class);
-
-
-        switch (base.getServerMessageType()) {
-            case LOAD_GAME ->
-                    messageHandler.onLoadGame(gson.fromJson(json, LoadGameMessage.class));
-            case NOTIFICATION ->
-                    messageHandler.onNotification(gson.fromJson(json, NotificationMessage.class));
-            case ERROR ->
-                    messageHandler.onError(gson.fromJson(json, ErrorMessage.class));
+            switch (base.getServerMessageType()) {
+                case LOAD_GAME -> {
+                    LoadGameMessage msg = gson.fromJson(json, LoadGameMessage.class);
+                    System.out.println("Game data: " + msg.getGame());
+                    messageHandler.onLoadGame(msg);
+                }
+                case NOTIFICATION ->
+                        messageHandler.onNotification(gson.fromJson(json, NotificationMessage.class));
+                case ERROR ->
+                        messageHandler.onError(gson.fromJson(json, ErrorMessage.class));
+            }
+        } catch (Exception e) {
+            System.out.println("Error processing message: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

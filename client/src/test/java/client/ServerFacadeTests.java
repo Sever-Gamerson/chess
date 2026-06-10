@@ -1,6 +1,6 @@
 package client;
 
-import dataaccess.DataAccessException;
+
 import model.AuthData;
 import model.GameData;
 
