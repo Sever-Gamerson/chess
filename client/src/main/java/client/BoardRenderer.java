@@ -54,49 +54,31 @@ public class BoardRenderer {
 
     private static void drawWhitePerspective(ChessBoard board, Set<ChessPosition> highlights) {
         printColHeaders(false);
-
-        // row 8 at top down to row 1 at bottom
         for (int row = 8; row >= 1; row--) {
-            printRowLabel(row);
-
-
-            for (int col = 1; col <= 8; col++) {
-
-                ChessPosition pos = new ChessPosition(row, col);
-                boolean light = (row + col) % 2 != 0;
-
-                boolean highlighted = highlights.contains(pos);
-                printSquare(board.getPiece(pos), light, highlighted);
-
-            }
-
-            printRowLabel(row);
-            System.out.println();
+            drawRow(board, highlights, row, 1, 8, 1);
         }
-
         printColHeaders(false);
     }
 
     private static void drawBlackPerspective(ChessBoard board, Set<ChessPosition> highlights) {
         printColHeaders(true);
-
-        // row 1 at top up to row 8 at bottom
         for (int row = 1; row <= 8; row++) {
-            printRowLabel(row);
-
-            for (int col = 8; col >= 1; col--) {
-                ChessPosition pos = new ChessPosition(row, col);
-                boolean light = (row + col) % 2 != 0;
-                boolean highlighted = highlights.contains(pos);
-                printSquare(board.getPiece(pos), light, highlighted);
-            }
-
-            printRowLabel(row);
-            System.out.println();
-
+            drawRow(board, highlights, row, 8, 1, -1);
         }
-
         printColHeaders(true);
+    }
+
+    private static void drawRow(ChessBoard board, Set<ChessPosition> highlights,
+                                int row, int colStart, int colEnd, int colStep) {
+        printRowLabel(row);
+        for (int col = colStart; col != colEnd + colStep; col += colStep) {
+            ChessPosition pos = new ChessPosition(row, col);
+            boolean light = (row + col) % 2 != 0;
+            boolean highlighted = highlights.contains(pos);
+            printSquare(board.getPiece(pos), light, highlighted);
+        }
+        printRowLabel(row);
+        System.out.println();
     }
 
 
