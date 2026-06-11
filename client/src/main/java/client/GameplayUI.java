@@ -233,7 +233,9 @@ public class GameplayUI implements WebSocketCommunicator.MessageHandler {
 
 
     private boolean isPromotionMove(ChessPosition start, ChessPosition end) {
-        if (currentGame == null) return false;
+        if (currentGame == null){
+            return false;
+        }
         ChessPiece piece = currentGame.game().getBoard().getPiece(start);
         if (piece == null || piece.getPieceType() != ChessPiece.PieceType.PAWN) {
             return false;

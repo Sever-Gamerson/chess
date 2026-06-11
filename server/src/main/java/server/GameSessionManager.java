@@ -24,7 +24,7 @@ public class GameSessionManager {
     // send to everyone in the game
     public void broadcast(int gameID, String message) {
         Set<WsContext> sessions = gameSessions.get(gameID);
-        if (sessions == null) return;
+        if (sessions == null){return;}
         for (WsContext ctx : sessions) {
             if (ctx.session.isOpen()) {
                 ctx.send(message);
@@ -35,7 +35,7 @@ public class GameSessionManager {
     // send to everyone except one session
     public void broadcastExcept(int gameID, WsContext exclude, String message) {
         Set<WsContext> sessions = gameSessions.get(gameID);
-        if (sessions == null) return;
+        if (sessions == null){return;}
         for (WsContext ctx : sessions) {
             if (ctx.session.isOpen() && !ctx.equals(exclude)) {
                 ctx.send(message);
