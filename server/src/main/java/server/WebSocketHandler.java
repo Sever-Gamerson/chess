@@ -14,8 +14,6 @@ import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 
-import java.io.IOException;
-
 public class WebSocketHandler {
 
     private final DataAccess dataAccess;

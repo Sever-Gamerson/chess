@@ -2,7 +2,6 @@ package passoff.server;
 
 import chess.*;
 import org.junit.jupiter.api.*;
-import passoff.server.TestFactory;
 
 import passoff.model.*;
 import passoff.websocket.*;
@@ -13,8 +12,6 @@ import websocket.messages.ServerMessage;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static websocket.messages.ServerMessage.ServerMessageType.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class WebSocketTests {
