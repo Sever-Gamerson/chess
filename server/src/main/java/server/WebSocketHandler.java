@@ -42,9 +42,7 @@ public class WebSocketHandler {
     public void onMessage(WsMessageContext ctx) {
         try {
             String message = ctx.message();
-            System.out.println("Received message: " + message);
             UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
-            System.out.println("Command type: " + command.getCommandType());
 
             switch (command.getCommandType()) {
                 case CONNECT -> handleConnect(ctx, command);
@@ -53,34 +51,25 @@ public class WebSocketHandler {
                 case RESIGN -> handleResign(ctx, command);
             }
         } catch (Exception e) {
-            System.out.println("Error handling message: " + e.getMessage());
-            e.printStackTrace();
             sendError(ctx, "Error: " + e.getMessage());
         }
     }
 
     private void handleConnect(WsContext ctx, UserGameCommand command) throws Exception {
-        System.out.println("Handling connect for gameID: " + command.getGameID());
-
         AuthData auth = dataAccess.getAuth(command.getAuthToken());
-        System.out.println("Auth: " + auth);
         if (auth == null) {
             sendError(ctx, "Error: unauthorized");
             return;
         }
 
         GameData game = dataAccess.getGame(command.getGameID());
-        System.out.println("Game: " + game);
         if (game == null) {
             sendError(ctx, "Error: game not found");
             return;
         }
 
         sessionManager.addSession(command.getGameID(), ctx);
-        System.out.println("Session added");
-
         ctx.send(gson.toJson(new LoadGameMessage(game)));
-        System.out.println("Load game sent");
 
         String username = auth.username();
         String role;
@@ -92,10 +81,8 @@ public class WebSocketHandler {
             role = username + " is observing";
         }
 
-        System.out.println("Broadcasting: " + role);
         sessionManager.broadcastExcept(command.getGameID(), ctx,
                 gson.toJson(new NotificationMessage(role)));
-        System.out.println("Connect handled successfully");
     }
 
     private void handleMakeMove(WsContext ctx, MakeMoveCommand command) throws Exception {

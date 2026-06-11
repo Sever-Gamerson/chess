@@ -60,13 +60,11 @@ public class WebSocketCommunicator {
     @OnMessage
     public void onMessage(String json) {
         try {
-            System.out.println("Received from server: " + json);
             ServerMessage base = gson.fromJson(json, ServerMessage.class);
 
             switch (base.getServerMessageType()) {
                 case LOAD_GAME -> {
                     LoadGameMessage msg = gson.fromJson(json, LoadGameMessage.class);
-                    System.out.println("Game data: " + msg.getGame());
                     messageHandler.onLoadGame(msg);
                 }
                 case NOTIFICATION ->
@@ -79,7 +77,6 @@ public class WebSocketCommunicator {
             e.printStackTrace();
         }
     }
-
     @OnClose
     public void onClose(Session session, CloseReason reason) {
         System.out.println("Connection closed: " + reason.getReasonPhrase());
